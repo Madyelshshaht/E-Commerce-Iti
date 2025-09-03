@@ -1,51 +1,63 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import CartNav from './RightNav/CartNav'
 
 const Navbar = () => {
     return (
-        <nav class="navbar navbar-expand-lg bg-body-tertiary ">
-            <div class="container-fluid">
-                <a class="navbar-brand badge text-bg-info p-2 fs-3 text-white" href="#">E-Com</a>
 
-                <button class="navbar-toggler " type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="offcanvas offcanvas-end " tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-
-
-                    <div class="offcanvas-header">
-                        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">E-Com</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                    </div>
-
-                    <div class="offcanvas-body">
-                        <ul class="navbar-nav justify-content-start flex-grow-1 pe-3 ">
-                            <li class="nav-item">
-                                <Link class="nav-link active" aria-current="page" to="/">Home</Link>
-                            </li>
-                            <li class="nav-item">
-                                <Link class="nav-link" to="/category">Categories</Link>
-                            </li>
-
-                            <li class="nav-item">
-                                <Link class="nav-link" to="/products">Products</Link>
-                            </li>
-                        </ul>
-                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3 ">
-                            <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="#">Cart</a>
-                            </li>
-                        </ul>
-                    </div>
-
-
-
+        <>
+            <nav className='pt-1 d-flex align-items-center justify-content-between px-2 container-fluid sticky-top bg-white'>
+                <div className="">
+                    <h2>Click to <Link className="navbar-brand badge text-bg-info p-2 fs-3 text-white" to="/">Buy</Link></h2>
                 </div>
 
+                <CartNav />
+            </nav>
 
-            </div>
-        </nav>
+            <nav className="navbar navbar-expand-lg bg-body-tertiary ">
+                <div className="container-fluid">
+                    <Link className="navbar-brand badge text-bg-info p-2 fs-3 text-white" to="/">E-Com</Link>
+
+                    <button className="navbar-toggler " type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div className="offcanvas offcanvas-end" tabIndex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+
+                        <div className="offcanvas-header">
+                            <h5 className="offcanvas-title" id="offcanvasNavbarLabel">E-Com</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+
+                        <div className="offcanvas-body">
+
+                            <ul className="navbar-nav justify-content-start flex-grow-1 pe-3 ">
+                                <li className="nav-item">
+                                    <Link className="nav-link active" aria-current="page" to="/">Home</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/categories">Categories</Link>
+                                </li>
+                            </ul>
+
+                            <ul className="navbar-nav justify-content-end flex-grow-1 pe-3 ">
+                                <li className="nav-item">
+                                    <Link className="nav-link" aria-current="page" to="/">Register</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" aria-current="page" to="/">Login</Link>
+                                </li>
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </nav>
+
+        </>
+
     )
 }
 
