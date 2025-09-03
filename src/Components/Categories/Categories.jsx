@@ -4,6 +4,7 @@ const categories = [
     {
         "id": 1,
         "title": "men",
+        "prefix": "men",
         "img": "https://i.pinimg.com/736x/67/d4/73/67d473ac5acd3069d909813c79d55942.jpg"
     },
     {

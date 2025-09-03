@@ -6,7 +6,7 @@ const Navbar = () => {
     return (
 
         <>
-            <nav className='pt-1 d-flex align-items-center justify-content-between px-2 container-fluid sticky-top bg-white'>
+            <nav className='pt-1 d-flex align-items-center justify-content-between px-3 container-fluid sticky-top bg-white '>
                 <div className="">
                     <h2>Click to <Link className="navbar-brand badge text-bg-info p-2 fs-3 text-white" to="/">Buy</Link></h2>
                 </div>

@@ -15,9 +15,13 @@ const CartProvider = ({ children }) => {
         setCart((prev) => {
             const existingItem = prev.find(item => item.id === product.id);
             if (existingItem) {
-                return prev.map(item =>
-                    item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-                );
+                if (existingItem.quantity <= product.max) {
+                    return prev.map(item =>
+                        item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+                    );
+                } else {
+                    return prev;
+                }
             }
             return [...prev, { ...product, quantity: 1, max: product.max }];
         });
@@ -48,7 +52,7 @@ const CartProvider = ({ children }) => {
         cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     return (
-        <cartContext.Provider value={{ cart, setCart, addToCart, getTotalQuantity, getTotalPrice, removeFromCart, clearCart , changeQuantity }}>
+        <cartContext.Provider value={{ cart, setCart, addToCart, getTotalQuantity, getTotalPrice, removeFromCart, clearCart, changeQuantity }}>
             {children}
         </cartContext.Provider>
     )
