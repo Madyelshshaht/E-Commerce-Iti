@@ -34,7 +34,7 @@ const Products = () => {
                                         price={item.price}
                                         max={item.max}
                                         cat_prefix={item.cat_prefix}
-                                        onAdd={() => addToCart(item)}
+                                        // onAdd={() => addToCart(item)}
                                     />
                                 </Col>
                             ))

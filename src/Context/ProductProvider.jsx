@@ -228,6 +228,7 @@ export const useProduct = () => useContext(ProductContext);
 const ProductProvider  = ({children}) => {
 
     const [product, setProduct] = useState([]);
+    console.log(product);
     const [prefix, setPrefix] = useState("");
 
     useEffect(() => {
