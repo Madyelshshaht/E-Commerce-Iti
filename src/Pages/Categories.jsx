@@ -1,6 +1,6 @@
 
 
-const categories = [
+const categoriess = [
     {
         "id": 1,
         "title": "men",
@@ -33,20 +33,64 @@ const categories = [
     }
 ]
 
+import { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
+
+import FormCategory from '../Components/Categories/FormCategory';
 import Category from '../Components/Categories/Category';
+
+import CategoriesSkeleton from '../Components/Feedback/Skeleton/CategoriesSkeleton';
+
 
 const Categories = () => {
 
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const [toggle, setToggle] = useState(false);
+
+
+
+
+
+    const GetCategories = () => {
+        try {
+            setLoading(true);
+            setCategories(categoriess)
+        } catch (err) {
+            console.error("Error Fetching Categories", err)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        GetCategories();
+    }, [])
+
+
+    if (loading) {
+        return (<CategoriesSkeleton />)
+    }
 
     return (
         <>
-            <h1 className='mb-5'>Categories</h1>
+            <div className='d-flex justify-content-between align-items-center mb-2'>
+                <h1 className='mb-5'>Categories</h1>
+                <button className='btn btn-success mb-4' onClick={() => setToggle(!toggle)}>
+                    {!toggle ? " Add Category " : "Close"}
+                </button>
+            </div>
+
+            {/* Form category */}
+            <FormCategory toggle={toggle} setToggle={setToggle} />
+
+
             <Row>
                 {categories.length > 0 ?
                     categories.map(cat => (
-                        <Col lg={3} md={4} xs={6}  className='d-flex justify-content-center mb-5 mt-2' key={cat.id}>
-                            <Category title={cat.title} img={cat.img}  prefix={cat.prefix} />
+                        <Col lg={3} md={4} xs={6} className='d-flex justify-content-center mb-5 mt-2' key={cat.id}>
+                            <Category title={cat.title} img={cat.img} prefix={cat.prefix} />
                         </Col>
                     ))
                     : (
