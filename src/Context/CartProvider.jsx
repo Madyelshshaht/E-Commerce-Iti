@@ -9,7 +9,6 @@ const CartProvider = ({ children }) => {
 
     const [cart, setCart] = useState([]);
 
-    console.log(cart);
 
     const addToCart = (product) => {
         setCart((prev) => {
@@ -23,6 +22,7 @@ const CartProvider = ({ children }) => {
                     return prev;
                 }
             }
+            // if the first Add
             return [...prev, { ...product, quantity: 1, max: product.max }];
         });
     }
@@ -30,8 +30,6 @@ const CartProvider = ({ children }) => {
     const removeFromCart = (id) => {
         setCart((prev) => prev.filter((item) => item.id !== id));
     };
-
-
 
     const clearCart = () => setCart([]);
 

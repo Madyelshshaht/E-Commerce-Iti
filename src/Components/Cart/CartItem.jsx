@@ -30,6 +30,7 @@ const CartItem = ({ id, title, price, quantity, max, img }) => {
                     <div className="select">
                         <select
                             value={quantity}
+                            // +e.target.value ==> htis is the Value (+) => to Make the vlue number
                             onChange={(e) => changeQuantity(id, +e.target.value)}
                             className="form-select w-auto mx-2"
                         >

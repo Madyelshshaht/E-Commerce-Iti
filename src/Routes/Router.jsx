@@ -2,9 +2,12 @@ import React from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from '../Components/Home';
 import App from '../App';
-import Categories from '../Components/Categories/Categories';
-import Products from '../Components/Products/Products';
-import Cart from '../Components/Cart/Cart';
+import Categories from '../Pages/Categories';
+import Products from '../Pages/Products';
+import Cart from '../Pages/Cart';
+import Register from '../Pages/Register';
+import Login from '../Pages/Login';
+import ProductDetails from '../Components/Products/ProductDetails';
 
 const router = createBrowserRouter([
     {
@@ -34,8 +37,21 @@ const router = createBrowserRouter([
             },
 
             {
+                path: "/categories/products/:prefix/:id",
+                element: (<ProductDetails />),
+            },
+
+            {
                 path: "/cart",
                 element: <Cart />,
+            },
+            {
+                path: "/register",
+                element: <Register />,
+            },
+            {
+                path: "/login",
+                element: <Login />,
             },
 
         ],

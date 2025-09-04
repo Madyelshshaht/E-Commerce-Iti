@@ -32,10 +32,9 @@ const categories = [
         "img": "https://i.pinimg.com/1200x/fb/ce/f6/fbcef681127496d8ae06c6c7fa7474df.jpg"
     }
 ]
-import axios from 'axios';
-import React, { useState } from 'react'
+
 import { Col, Row } from 'react-bootstrap';
-import Category from './Category';
+import Category from '../Components/Categories/Category';
 
 const Categories = () => {
 

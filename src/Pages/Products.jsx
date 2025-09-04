@@ -1,16 +1,18 @@
 
 import { useParams } from 'react-router-dom';
+import { useProduct } from '../Context/ProductProvider';
+import Product from '../Components/Products/Product';
 import { Col, Row } from 'react-bootstrap';
-import Product from './Product';
-import { useProduct } from '../../Context/ProductProvider';
-import { UseCart } from '../../Context/CartProvider';
+
+import Lottie from "lottie-react";
+import NoData from "../assets/LotiFiles/No_Data.json"
+
 
 const Products = () => {
     const { prefix } = useParams();
 
     const { product } = useProduct();
 
-    const { addToCart } = UseCart();
 
     return (
         <>
@@ -28,17 +30,25 @@ const Products = () => {
                                     className='my-2'
                                 >
                                     <Product
+                                        prefix={prefix}
                                         id={item.id}
                                         title={item.title}
                                         img={item.img}
                                         price={item.price}
                                         max={item.max}
                                         cat_prefix={item.cat_prefix}
-                                        // onAdd={() => addToCart(item)}
                                     />
                                 </Col>
                             ))
-                            : <div>No products found</div>
+                            :
+                            (
+                                <>
+                                    <div className='m-auto' style={{ width: "600px" }} >
+                                        <Lottie animationData={NoData} loop={true} autoplay={true} />
+                                    </div>
+                                    <h3 className='text-center mt-2 fw-bold'>No Products Found</h3>
+                                </>
+                            )
                     }
                 </Row>
             </div>
