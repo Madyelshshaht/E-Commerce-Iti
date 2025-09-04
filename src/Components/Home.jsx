@@ -1,8 +1,11 @@
+
+
 import React from 'react';
 
-import img2 from '../assets/1.jpg';
 
 import './style.css';
+
+
 
 const Home = () => {
     return (
@@ -29,12 +32,17 @@ const Home = () => {
 
                     {/* Image Section */}
                     <div className="col-md-6 text-center">
-                        <img
+                        
+
+                        {/* <img
                             src={img2}
                             alt="Hero Banner"
                             className="img-fluid rounded shadow hero-img"
                             style={{ maxHeight: '400px', objectFit: 'cover' }}
-                        />
+
+                        /> */}
+                        
+
                     </div>
                 </div>
             </div>

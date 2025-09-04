@@ -42,10 +42,10 @@ const Navbar = () => {
 
                             <ul className="navbar-nav justify-content-end flex-grow-1 pe-3 ">
                                 <li className="nav-item">
-                                    <Link className="nav-link" aria-current="page" to="/">Register</Link>
+                                    <Link className="nav-link" aria-current="page" to="/register">Register</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" aria-current="page" to="/">Login</Link>
+                                    <Link className="nav-link" aria-current="page" to="/login">Login</Link>
                                 </li>
                             </ul>
 
