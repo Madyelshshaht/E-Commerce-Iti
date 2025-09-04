@@ -1,8 +1,10 @@
 
+
 import React from 'react';
 
 
 import './style.css';
+
 
 
 const Home = () => {
@@ -30,12 +32,17 @@ const Home = () => {
 
                     {/* Image Section */}
                     <div className="col-md-6 text-center">
+                        
+
                         {/* <img
                             src={img2}
                             alt="Hero Banner"
                             className="img-fluid rounded shadow hero-img"
                             style={{ maxHeight: '400px', objectFit: 'cover' }}
+
                         /> */}
+                        
+
                     </div>
                 </div>
             </div>
