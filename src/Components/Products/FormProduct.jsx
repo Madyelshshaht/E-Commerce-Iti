@@ -1,50 +1,98 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { CgCloseO } from "react-icons/cg";
+import useCategories from "../../Hooks/useCategories/useCategories";
 
-const FormProduct = ({ toggle, setToggle }) => {
-    const [Title, setTitle] = useState("");
-    const [Price, setPrice] = useState(null);
-    const [Max, setMax] = useState(null);
-    const [Image, setIamge] = useState(null);
+const FormProduct = ({ toggle, setToggle, initialData, setInitialData, AddProduct, UpdateProduct }) => {
 
-    // const handelSubmit = async (e) => {
-    //     e.preventDefault();
-
-    //     const formData = new FormData();
-    //     formData.append("title", Title);
-    //     formData.append("price", Price);
-    //     formData.append("max", Max);
-    //     formData.append("image", Image)
-
-    //     console.log("New Product:", {
-    //         name: ProductName,
-    //         image: ProductImage,
-    //     });
-
-    //     try {
-    //         const res = await axios.post(`http://localhost:5000/api/categories`, formData, {
-    //             headers: {
-    //                 "Authorization": `Bearer {token}`,
-    //                 "Content-Type": "multipart/form-data",
-    //             }
-    //         });
-
-    //         console.log("Product added:", res.data);
-
-    //         setTitle("");
-    //         setPrice(null);
-    //         setMax(null);
-    //         setImage(null);
-
-    //     } catch (err) {
-    //         console.log("Error adding Product:", err);
-    //     }
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [price, setPrice] = useState("");
+    const [stockQuantity, setStockQuantity] = useState("");
+    const [categoryId, setcategoryId] = useState("")
+    const [image, setImage] = useState(null)
 
 
+    const { categories } = useCategories();
 
-    // }
+    useEffect(() => {
+        if (initialData) {
+            setTitle(initialData.title);
+            setDescription(initialData.description);
+            setPrice(initialData.price);
+            setStockQuantity(initialData.stockQuantity);
+            setcategoryId(initialData.categoryId);
+            setImage(null);
+        }
+    }, [initialData]);
+
+
+    const handelSubmit = async (e) => {
+        e.preventDefault();
+        try {
+
+            const catId = parseInt(categoryId);
+            const pr = parseFloat(price);
+            const stock = parseInt(stockQuantity);
+
+            if (initialData) {
+
+                await UpdateProduct(
+                    initialData.productId,
+                    image,
+                    title,
+                    description,
+                    pr,
+                    stock,
+                    catId,
+                );
+                console.log("Category updated successfully");
+
+                setInitialData(null);
+                setToggle(false)
+
+            } else {
+
+                await AddProduct(
+                    image,
+                    title,
+                    description,
+                    pr,
+                    stock,
+                    catId,
+                );
+                console.log("Category added successfully");
+                setToggle(false)
+            }
+
+            // reset form
+            setTitle("");
+            setDescription("");
+            setPrice("");
+            setStockQuantity("");
+            setcategoryId("");
+            setImage(null);
+
+        } catch (error) {
+            console.error("Error adding product:", error);
+        }
+
+    }
+
+    const Cancel = async () => {
+
+        // reset form
+        setTitle("");
+        setDescription("");
+        setPrice("");
+        setStockQuantity("");
+        setcategoryId("");
+        setImage(null);
+
+        setInitialData(null);
+        setToggle(false)
+    }
 
     return (
         <div>
@@ -55,7 +103,7 @@ const FormProduct = ({ toggle, setToggle }) => {
                     <button
                         className="btn close-btn position-absolute p-1"
                         style={{ right: "10px", top: "10px" }}
-                        onClick={() => setToggle(false)}
+                        onClick={Cancel}
                     >
                         <span className="d-flex justify-content-center align-items-center bg-danger rounded-pill text-white">
                             <CgCloseO size={20} />
@@ -64,56 +112,85 @@ const FormProduct = ({ toggle, setToggle }) => {
 
                     <h2 className="text-center mt-3">Add Product </h2>
 
-                    <Form className="p-4">
-                        <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form className="p-4" onSubmit={handelSubmit}>
+
+                        <Form.Group className="mb-3">
                             <Form.Label>Title</Form.Label>
                             <Form.Control
                                 type="text"
                                 placeholder="Enter Name"
-                                value={Title}
+                                value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                                 required
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Group className="mb-3">
+                            <Form.Label>Description</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter Name"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
                             <Form.Label>Price</Form.Label>
                             <Form.Control
                                 type="number"
-                                placeholder="Enter Name"
-                                value={Price}
+                                placeholder="Enter Price"
+                                value={price}
                                 onChange={(e) => setPrice(e.target.value)}
                                 required
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="formBasicEmail">
-                            <Form.Label>Max</Form.Label>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Stock Quantity</Form.Label>
                             <Form.Control
                                 type="number"
-                                placeholder="Enter Name"
-                                value={Max}
-                                onChange={(e) => setMax(e.target.value)}
+                                placeholder="Enter Stock Quantity"
+                                value={stockQuantity}
+                                onChange={(e) => setStockQuantity(e.target.value)}
                                 required
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Form.Group className="mb-3">
                             <Form.Label>Image Product</Form.Label>
                             <Form.Control
                                 type="file"
-                                value={Image}
-                                onChange={(e) => setIamge(e.target.value)}
+                                onChange={(e) => setImage(e.target.files[0])}
                                 required
                             />
                             <Form.Text className="text-muted">
-                                Select image to Product
+                                Select image for Product
                             </Form.Text>
                         </Form.Group>
 
-                        <Button variant="primary" type="submit">
-                            Submit
-                        </Button>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Category</Form.Label>
+                            <Form.Select
+                                value={categoryId}
+                                onChange={(e) => setcategoryId(e.target.value)}
+                                required
+                            >
+                                <option value="">Select Category</option>
+                                {categories.map((cat) => (
+                                    <option key={cat.categoryId} value={cat.categoryId}>
+                                        {cat.title}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+
+                        <div className="d-flex align-items-center">
+                            <Button variant="primary" type="submit">
+                                Submit
+                            </Button>
+                        </div>
                     </Form>
                 </div>
             )}

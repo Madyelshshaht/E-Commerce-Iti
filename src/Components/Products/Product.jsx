@@ -3,10 +3,17 @@ import { UseCart } from '../../Context/CartProvider';
 import { Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
+import { SlOptionsVertical } from "react-icons/sl";
+import { IoMdClose } from "react-icons/io";
 
-const Product = ({ id, img, title, price, max , prefix }) => {
+import img1 from "../../assets/Cat_Image/download.jpg"
+import ButtonAddToCart from '../Common/ButtonAddToCart';
+
+const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDelete }) => {
 
     const { cart, addToCart } = UseCart();
+
+    const [menuOpen, setMenuOpen] = useState(false);
 
 
     const [isDebouncing, setIsDebouncing] = useState(false);
@@ -42,32 +49,92 @@ const Product = ({ id, img, title, price, max , prefix }) => {
         setIsDebouncing(true);
     }
 
+    const handleDelete = () => {
+        onDelete(id)
+        setMenuOpen(false)
+    }
+
 
     return (
-        <div className='d-flex justify-content-center align-items-center w-100 mb-2'>
+        <div className='d-flex justify-content-center align-items-center w-100 mb-2 position-relative'>
 
-            <div className='d-flex flex-column justify-content-center align-items-start px-3 py-3  rounded rounded-3 w-100'>
-                <Link to={`/categories/products/${prefix}/${id}`} className="text-decoration-none text-dark w-100 text-center">
-                    <img src={img} alt={title} width={150} height={160}  className='m-auto shadow p-2 rounded rounded-3 ' />
+            <div
+                className='position-absolute  p-1'
+                style={{ right: "0px", top: "5px", zIndex: "10px", cursor: "pointer" }}
+                onClick={() => setMenuOpen(!menuOpen)}
+            >
+
+                <div className="icon-wrapper">
+                    <span className={`icon ${!menuOpen ? "show" : "hide"}`}>
+                        <SlOptionsVertical size={20} />
+                    </span>
+                    <span className={`icon ${menuOpen ? "show" : "hide"}`}>
+                        <IoMdClose size={25} />
+                    </span>
+                </div>
+
+
+            </div>
+
+            {menuOpen && (
+                <div
+                    className="position-absolute bg-white shadow rounded  p-2 w-50 "
+                    style={{ right: "40px", top: "5px", zIndex: 999 }}
+                >
+                    <button
+                        className=" btn btn-outline-info fw-bold w-100 text-start "
+                        onClick={() => {
+                            onEdit();
+                            setMenuOpen(false);
+                        }}
+                    >
+                        Edit
+                    </button>
+                    <button
+                        className=" btn btn-outline-danger fw-bold w-100 text-start mt-2 border-top pt-2"
+                        onClick={handleDelete}
+                    >
+                        Delete
+                    </button>
+                </div>
+            )}
+
+            <div className='d-flex flex-column justify-content-center align-items-start px-3 py-2  rounded rounded-3 w-100'>
+                <Link to={`/categories/products/${prefix}/${id}`}  className="text-decoration-none text-dark w-100 text-center">
+                    {img ?
+                        (
+                            <img
+                                src={`data:image/png;base64,${img}`}
+                                width={150} height={150} className='m-auto shadow mb-2 rounded rounded-3 '
+                                alt={title}
+                            />
+                        )
+                        : (
+                            <img
+                                src={img1}
+                                width={150} height={160} className='m-auto shadow p-2 rounded rounded-3 '
+                                alt="No Iamge"
+                            />
+                        )
+                    }
                     <div className='px-4 my-1'>
                         <h5 className=" mt-2" title={title}>{title.length > 15 ? title.slice(0, 15) + "..." : title}</h5>
                         <h6 className='mb-2'> {price.toFixed(2)} EGP</h6>
                         {AvailableStock > 0 ? (<p><strong>Available:</strong> {AvailableStock} </p>) : <p className='badge text-bg-danger p-2  '> Sold Out </p>}
                     </div>
                 </Link>
-                <button
-                    className={`btn  text-white px-4 m-auto ${isDisabled ? 'btn-secondary cursor-not-allowed opacity-75' : 'btn-info'}`}
-                    onClick={handelAddToCart}
-                    disabled={isDisabled}
-                >
-                    {isOutOfStock
-                        ? "Out of Stock"
-                        : isDebouncing
-                            ? <>
-                                <Spinner animation="border" size="sm" /> Loading...
-                            </>
-                            : "Add to Cart"}
-                </button>
+
+                <div className='m-auto'>
+
+                    <ButtonAddToCart
+                        productId={id}
+                        title={title}
+                        price={price}
+                        max={max}
+                        img={img}
+                    />
+                </div>
+
             </div>
 
         </div>
