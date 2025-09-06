@@ -12,7 +12,9 @@ const CartItem = ({ id, title, price, quantity, max, img }) => {
                 <div className='info d-flex align-items-center justify-content-between'>
 
                     <div className='d-flex gap-3 align-items-center p-2'>
-                        <img src={img} alt={title} style={{ width: "100px" }} />
+                        {/* <img src={img} alt={title} style={{ width: "100px" }} /> */}
+                        <img src={`data:image/png;base64,${img}`}  alt="" style={{ width: "100px" }} />
+
                         <div className="info-text d-flex flex-column align-items-start justify-content-between ">
                             <div className=''>
                                 <h6>{title}</h6>

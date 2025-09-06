@@ -1,44 +1,65 @@
-import axios from "axios";
-import React, { useState } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+
+import { useEffect, useState } from "react";
+import { Button, Form } from "react-bootstrap";
 import { CgCloseO } from "react-icons/cg";
+import useCategories from "../../Hooks/useCategories/useCategories";
 
-const FormCategory = ({ toggle, setToggle }) => {
-    const [Name, setName] = useState("");
-    const [Image, setIamge] = useState(null);
+const FormCategory = ({ toggle, setToggle, initialData, setInitialData, AddCategory, EditCategory }) => {
 
-    // const handelSubmit = async (e) => {
-    //     e.preventDefault();
 
-    //     const formData = new FormData();
-    //     formData.append("name", Name)
-    //     formData.append("image", Image)
+    const [title, setTitle] = useState("");
+    const [prefix, setPrefix] = useState("");
+    const [image, setImage] = useState(null);
 
-    //     console.log("New Category:", {
-    //         name: categoryName,
-    //         image: categoryImage,
-    //     });
 
-    //     try {
-    //         const res = await axios.post(`http://localhost:5000/api/categories`, formData, {
-    //             headers: {
-    //                 "Authorization": `Bearer {token}`,
-    //                 "Content-Type": "multipart/form-data",
-    //             }
-    //         });
+    useEffect(() => {
+        if (initialData) {
+            setTitle(initialData.title || "");
+            setPrefix(initialData.prefix || "");
+            setImage(null);
+        }
+    }, [initialData]);
 
-    //         console.log("Category added:", res.data);
+    console.log(initialData)
 
-    //     setName("");
-    //     setIamge(null);
+    const Cancel = async () => {
 
-    //     } catch (err) {
-    //         console.log("Error adding category:", err);
-    //     }
+        // reset form
+        setTitle("");
+        setPrefix("");
+        setImage(null);
+
+        setInitialData(null);
+        setToggle(false)
+    }
 
 
 
-    // }
+    const handelSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            if (initialData) {
+
+                await EditCategory(initialData.categoryId, title, prefix, image,);
+                console.log("Category updated successfully");
+                setInitialData(null);
+                setToggle(false)
+            } else {
+                await AddCategory(title, prefix, image);
+                console.log("Category added successfully");
+                setToggle(false)
+            }
+
+            setTitle("");
+            setPrefix("");
+            setImage(null);
+
+        } catch (err) {
+            console.error("Error adding category:", err);
+        }
+    };
+
 
     return (
         <div>
@@ -49,33 +70,49 @@ const FormCategory = ({ toggle, setToggle }) => {
                         style={{ right: "10px", top: "10px" }}
                         onClick={() => setToggle(false)}
                     >
-                        <span className="d-flex justify-content-center align-items-center bg-danger rounded-pill text-white">
+                        <span className="d-flex justify-content-center align-items-center bg-danger rounded-pill text-white" onClick={Cancel}>
                             <CgCloseO size={20} />
                         </span>
                     </button>
 
-                    <h2 className="text-center mt-3">Add Category </h2>
+                    <h2 className="text-center mt-3">
+                        {initialData ? "Edit Category" : "Add Category"}
+                    </h2>
 
-                    <Form className="p-4">
-                        <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form className="p-4" onSubmit={handelSubmit}>
+
+                        <Form.Group className="mb-3">
                             <Form.Label>Category Name</Form.Label>
                             <Form.Control
                                 type="text"
                                 placeholder="Enter Name"
-                                value={Name}
-                                onChange={(e) => setName(e.target.value)}
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
                                 required
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="formBasicPassword">
-                            <Form.Label>Image Category</Form.Label>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Category Prefix</Form.Label>
                             <Form.Control
-                                type="file"
-                                value={Image}
-                                onChange={(e) => setIamge(e.target.value)}
+                                type="text"
+                                placeholder="Enter Prefix"
+                                value={prefix}
+                                onChange={(e) => setPrefix(e.target.value)}
                                 required
                             />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label> Category Image </Form.Label>
+                            <Form.Control
+                                type="file"
+                                onChange={(e) => setImage(e.target.files[0])}
+                                required
+                            />
+                            {initialData && !image && (
+                                <p className="text-muted mt-1">Current image will remain if no new image is selected.</p>
+                            )}
                             <Form.Text className="text-muted">
                                 Select image to Category
                             </Form.Text>

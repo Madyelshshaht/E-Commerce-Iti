@@ -2,9 +2,9 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <footer className="bg-dark text-white pt-4 mt-5">
+    <footer className="bg-dark text-white  mt-5">
       <div className="container">
-        <div className="row text-center text-md-start">
+        {/* <div className="row text-center text-md-start">
 
           <div className="col-md-4 mb-3">
             <h5 className="fw-bold">About Us</h5>
@@ -29,11 +29,11 @@ const Footer = () => {
             <p className="small mb-1">Mon - Fri: 9:00 AM - 9:00 PM</p>
             <p className="small">Sat - Sun: 10:00 AM - 6:00 PM</p>
           </div>
-        </div>
+        </div> */}
 
 
-        <div className="text-center py-3 border-top border-light mt-3">
-          <p className="mb-0 small">&copy; {new Date().getFullYear()} Your Company. All Rights Reserved.</p>
+        <div className="text-center py-3 border-top border-light ">
+          <p className="mb-0 small">&copy; {new Date().getFullYear()} Your E-Commerce. All Rights Reserved. by Mady & Joo </p>
         </div>
       </div>
     </footer>

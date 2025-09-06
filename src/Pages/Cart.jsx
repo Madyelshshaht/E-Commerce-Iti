@@ -8,6 +8,8 @@ import EmptyCard from "../assets/LotiFiles/Empty_Cart.json"
 const Cart = () => {
     const { cart, getTotalPrice } = UseCart();
 
+    console.log(cart)
+
     if (cart.length === 0) {
         return (
             <>
