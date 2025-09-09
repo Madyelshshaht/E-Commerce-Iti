@@ -1,0 +1,20 @@
+@media screen and (max-width: 400px) {
+    .product img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .product .div {
+        padding: 0;
+    }
+
+    .product .h5 {
+        font-size: 16px;
+    }
+
+    .product .h6,
+    p {
+        font-size: 13px;
+    }
+
+}

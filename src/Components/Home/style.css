@@ -1,0 +1,35 @@
+.category-overlay {
+    display: flex;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+    background: #0000006c;
+}
+
+.category-card:hover .category-overlay {
+    opacity: 1;
+}
+
+.category-card img {
+    height: 350px;
+    width: 300px;
+    padding: 10px;
+}
+
+.hero .title {
+    font-size: 40px;
+}
+
+.hero .desc {
+    font-size: 20px;
+}
+
+
+@media screen and (max-width: 1000px) {
+    .hero .title {
+    font-size: 25px;
+}
+
+.hero .desc {
+    font-size: 12px;
+}
+}

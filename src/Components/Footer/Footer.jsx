@@ -32,7 +32,7 @@ const Footer = () => {
         </div> */}
 
 
-        <div className="text-center py-3 border-top border-light ">
+        <div className="text-center py-3 border-top border-light px-2">
           <p className="mb-0 small">&copy; {new Date().getFullYear()} Your E-Commerce. All Rights Reserved. by Mady & Joo </p>
         </div>
       </div>

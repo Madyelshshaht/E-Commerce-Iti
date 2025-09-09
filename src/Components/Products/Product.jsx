@@ -8,6 +8,8 @@ import { IoMdClose } from "react-icons/io";
 
 import img1 from "../../assets/Cat_Image/download.jpg"
 import ButtonAddToCart from '../Common/ButtonAddToCart';
+import { useUser } from '../../Context/UserProvider';
+import { connect } from 'react-redux';
 
 const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDelete }) => {
 
@@ -18,7 +20,7 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
 
     const [isDebouncing, setIsDebouncing] = useState(false);
 
-    const existingItem = cart.find(item => item.id === id);
+    const existingItem = cart.items.find(item => item.productId === id);
     const QuantityinCart = existingItem ? existingItem.quantity : 0;
 
     const AvailableStock = max - QuantityinCart;
@@ -26,6 +28,11 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
     const isOutOfStock = QuantityinCart >= max;
 
     const isDisabled = isOutOfStock || isDebouncing;
+
+
+    const { user } = useUser();
+    const userRoles = user?.userRoles || [];
+    const isAdmin = userRoles.includes("Admin");
 
 
     // Depounce Time
@@ -42,13 +49,6 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
     }, [isDebouncing]);
 
 
-    const handelAddToCart = () => {
-        if (isDisabled) return;
-
-        addToCart({ id, img, title, price, max });
-        setIsDebouncing(true);
-    }
-
     const handleDelete = () => {
         onDelete(id)
         setMenuOpen(false)
@@ -56,27 +56,33 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
 
 
     return (
-        <div className='d-flex justify-content-center align-items-center w-100 mb-2 position-relative'>
+        <div className='d-flex justify-content-center align-items-center w-100 mb-2 position-relative overflow-hidden'>
 
-            <div
-                className='position-absolute  p-1'
-                style={{ right: "0px", top: "5px", zIndex: "10px", cursor: "pointer" }}
-                onClick={() => setMenuOpen(!menuOpen)}
-            >
+            {isAdmin && (
+                <div
+                    className='position-absolute  p-1'
+                    style={{ right: "0px", top: "5px", zIndex: "10px", cursor: "pointer" }}
+                    onClick={() => setMenuOpen(!menuOpen)}
+                >
 
-                <div className="icon-wrapper">
-                    <span className={`icon ${!menuOpen ? "show" : "hide"}`}>
-                        <SlOptionsVertical size={20} />
-                    </span>
-                    <span className={`icon ${menuOpen ? "show" : "hide"}`}>
-                        <IoMdClose size={25} />
-                    </span>
+                    <div className="icon-wrapper">
+                        <span className={`icon ${!menuOpen ? "show" : "hide"}`}>
+                            <SlOptionsVertical size={20} />
+                        </span>
+                        <span className={`icon ${menuOpen ? "show" : "hide"}`}>
+                            <IoMdClose size={25} />
+                        </span>
+                    </div>
+
+
                 </div>
+            )}
 
 
-            </div>
+            {/* Admin role */}
 
-            {menuOpen && (
+            {isAdmin && 
+            menuOpen && (
                 <div
                     className="position-absolute bg-white shadow rounded  p-2 w-50 "
                     style={{ right: "40px", top: "5px", zIndex: 999 }}
@@ -100,7 +106,7 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
             )}
 
             <div className='d-flex flex-column justify-content-center align-items-start px-3 py-2  rounded rounded-3 w-100'>
-                <Link to={`/categories/products/${prefix}/${id}`}  className="text-decoration-none text-dark w-100 text-center">
+                <Link to={`/categories/products/${prefix}/${id}`} className="text-decoration-none text-dark w-100 text-center product">
                     {img ?
                         (
                             <img
@@ -110,6 +116,7 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
                             />
                         )
                         : (
+                            // Default Image
                             <img
                                 src={img1}
                                 width={150} height={160} className='m-auto shadow p-2 rounded rounded-3 '
@@ -117,15 +124,14 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
                             />
                         )
                     }
-                    <div className='px-4 my-1'>
-                        <h5 className=" mt-2" title={title}>{title.length > 15 ? title.slice(0, 15) + "..." : title}</h5>
-                        <h6 className='mb-2'> {price.toFixed(2)} EGP</h6>
+                    <div className='px-4 my-1 div'>
+                        <h5 className=" mt-2 h5" title={title}>{title.length > 15 ? title.slice(0, 15) + "..." : title}</h5>
+                        <h6 className='mb-2 h6'> {price.toFixed(2)} EGP</h6>
                         {AvailableStock > 0 ? (<p><strong>Available:</strong> {AvailableStock} </p>) : <p className='badge text-bg-danger p-2  '> Sold Out </p>}
                     </div>
                 </Link>
 
                 <div className='m-auto'>
-
                     <ButtonAddToCart
                         productId={id}
                         title={title}

@@ -4,16 +4,52 @@ import CartItem from '../Components/Cart/CartItem';
 
 import Lottie from "lottie-react";
 import EmptyCard from "../assets/LotiFiles/Empty_Cart.json"
+import Success from "../assets/LotiFiles/Success.json"
+import UseAuth from '../Hooks/useAuth/UseAuth';
+import { Spinner } from 'react-bootstrap';
+import UseOrders from '../Hooks/Orders/UseOrders';
+import { useState } from 'react';
 
 const Cart = () => {
-    const { cart, getTotalPrice } = UseCart();
+    const { cart, getTotalPrice, loading, clearCart_LogOut } = UseCart();
 
-    console.log(cart)
+    console.log("Cart", cart)
 
-    if (cart.length === 0) {
+    const { PlaceOrder } = UseOrders()
+    const [orderSuccess, setOrderSuccess] = useState(false);
+
+
+    const handelPlaceOrder = async () => {
+        const success = await PlaceOrder();
+        if (success) {
+            setOrderSuccess(true);
+            clearCart_LogOut();
+        }
+    };
+
+
+    if (loading) {
+        return (
+            <div className="d-flex justify-content-center align-items-center mt-5">
+                <Spinner animation="border" size="lg" variant='info' />
+            </div>
+        );
+    }
+
+    if (orderSuccess) {
+        return (
+            <div className="text-center mt-5 m-auto w-100" style={{ maxWidth: "600px" }}>
+                <Lottie animationData={Success} loop={false} autoplay={true} />
+                <h3 className="mt-3 fw-semibold text-success">Order placed successfully 🎉</h3>
+            </div>
+        );
+    }
+
+
+    if (!cart.items || cart.items.length === 0) {
         return (
             <>
-                <div className='m-auto' style={{width: "600px" }} >
+                <div className='m-auto w-100' style={{ maxWidth: "600px" }} >
                     <Lottie animationData={EmptyCard} loop={true} autoplay={true} />
                 </div>
                 <h3 className="text-center mt-3 fw-semibold">Your cart is empty ):</h3>
@@ -24,21 +60,21 @@ const Cart = () => {
     return (
         <div className="container mt-4">
             {
-                cart.map((item) => (
+                cart.items.map((item, idx) => (
                     <CartItem
-                        key={item.id}
-                        img={item.img}
-                        id={item.id}
+                        key={item.productId}
+                        img={item.image}
+                        id={item.productId}
                         title={item.title}
                         price={item.price}
                         quantity={item.quantity}
-                        max={item.max}
+                        max={item.stockQuantity}
                     />
                 ))}
 
             <div className='d-flex justify-content-between align-items-center mt-5'>
                 <h5>Total Price: {(getTotalPrice()).toFixed(2)} EGP</h5>
-                <button className='btn btn-primary'>Place Order</button>
+                <button className='btn btn-primary' onClick={handelPlaceOrder}>Place Order</button>
             </div>
         </div>
     )

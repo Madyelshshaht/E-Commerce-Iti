@@ -14,7 +14,7 @@ const SearchCategory = ({ product, setSearchData }) => {
             c.title.toLowerCase().includes(search.toLowerCase())
         );
         setSearchData(filtered);
-    }, [search, product, setSearchData]);
+    }, [search, product, setSearch]);
 
     return (
         <>

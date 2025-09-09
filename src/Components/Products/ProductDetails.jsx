@@ -9,9 +9,7 @@ const ProductDetails = () => {
     const { product } = useProduct();
 
     const specificProduct = product.find(p => p.productId === parseInt(id))
-    console.log("Specific Product:", specificProduct)
 
-    console.log(product)
     
 
     return (

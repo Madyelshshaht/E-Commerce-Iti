@@ -20,7 +20,6 @@ const FormCategory = ({ toggle, setToggle, initialData, setInitialData, AddCateg
         }
     }, [initialData]);
 
-    console.log(initialData)
 
     const Cancel = async () => {
 
@@ -42,12 +41,10 @@ const FormCategory = ({ toggle, setToggle, initialData, setInitialData, AddCateg
             if (initialData) {
 
                 await EditCategory(initialData.categoryId, title, prefix, image,);
-                console.log("Category updated successfully");
                 setInitialData(null);
                 setToggle(false)
             } else {
                 await AddCategory(title, prefix, image);
-                console.log("Category added successfully");
                 setToggle(false)
             }
 

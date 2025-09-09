@@ -47,7 +47,6 @@ const FormProduct = ({ toggle, setToggle, initialData, setInitialData, AddProduc
                     stock,
                     catId,
                 );
-                console.log("Category updated successfully");
 
                 setInitialData(null);
                 setToggle(false)
@@ -62,7 +61,6 @@ const FormProduct = ({ toggle, setToggle, initialData, setInitialData, AddProduc
                     stock,
                     catId,
                 );
-                console.log("Category added successfully");
                 setToggle(false)
             }
 
