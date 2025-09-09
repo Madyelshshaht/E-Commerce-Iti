@@ -1,8 +1,35 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+
+import { Link, useNavigate } from 'react-router-dom'
 import CartNav from './RightNav/CartNav'
 
+import { useUser } from '../../Context/UserProvider'
+import { useEffect, useState } from 'react';
+import { UseCart } from '../../Context/CartProvider';
+
+import { GiExitDoor } from "react-icons/gi";
+import { BiRun } from "react-icons/bi";
+
+import "./Navstyle.css"
+
+
 const Navbar = () => {
+    const { Logout, token, user } = useUser();
+    const { clearCart_LogOut } = UseCart();
+
+
+    const navigate = useNavigate();
+
+    const handleLogOut = () => {
+        Logout();
+        clearCart_LogOut();
+        navigate("/login")
+    }
+
+
+    const userRoles = user?.userRoles || [];
+    const isAdmin = userRoles.includes("Admin");
+
+
     return (
 
         <>
@@ -16,7 +43,11 @@ const Navbar = () => {
 
             <nav className="navbar navbar-expand-lg bg-body-tertiary ">
                 <div className="container-fluid">
-                    <Link className="navbar-brand badge text-bg-info p-2 fs-3 text-white" to="/">E-Com</Link>
+                    {isAdmin ?
+                        <Link className="navbar-brand badge text-bg-secondary p-2 fs-3 text-white" to="/">Admin</Link>
+                        :
+                        <Link className="navbar-brand badge text-bg-info p-2 fs-3 text-white" to="/">E-Com</Link>
+                    }
 
                     <button className="navbar-toggler " type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
@@ -39,15 +70,52 @@ const Navbar = () => {
                                     <Link className="nav-link" to="/categories">Categories</Link>
                                 </li>
                             </ul>
+                            {
+                                !token ? (
+                                    <ul className="navbar-nav justify-content-end flex-grow-1 pe-3 ">
+                                        <li className="nav-item">
+                                            <Link className="nav-link" aria-current="page" to="/register">Register</Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" aria-current="page" to="/login">Login</Link>
+                                        </li>
+                                    </ul>
+                                ) : (
+                                    <div className='d-flex align-items-center gap-4 pe-3'>
 
-                            <ul className="navbar-nav justify-content-end flex-grow-1 pe-3 ">
-                                <li className="nav-item">
-                                    <Link className="nav-link" aria-current="page" to="/register">Register</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link className="nav-link" aria-current="page" to="/login">Login</Link>
-                                </li>
-                            </ul>
+                                        <Link to="/orders" className='text-decoration-none text-black '> Orders </Link>
+
+                                        <Link className="nav-link" aria-current="page" to="/profile">
+                                            <span>
+                                                {user ? (
+                                                    <>
+                                                        <img
+                                                            src={`https://avatar.iran.liara.run/public/${user?.id}`}
+                                                            alt="Avatar"
+                                                            width={40}
+                                                            height={40}
+                                                            className="rounded-circle"
+                                                        />
+                                                        <span className='ms-1'>{user.firstName}</span>
+                                                    </>
+                                                ) : (
+                                                    <span className="placeholder rounded-circle bg-secondary" style={{ width: 40, height: 40 }} />
+                                                )}
+                                            </span>
+                                        </Link>
+
+
+                                        <button className='position-relative btn-logout' onClick={handleLogOut} >
+                                            <span className='text-logout'>LogOut</span>
+                                            <div className='position-absolute logout ' >
+                                                <span className='run'><BiRun size={25} /></span>
+                                                <span><GiExitDoor size={25} /> </span>
+                                            </div>
+                                        </button>
+                                    </div>
+                                )
+                            }
+
 
                         </div>
 

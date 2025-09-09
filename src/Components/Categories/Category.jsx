@@ -7,6 +7,7 @@ import { IoMdClose } from "react-icons/io";
 
 import img1 from "../../assets/Cat_Image/download.jpg"
 import { useState } from 'react';
+import { useUser } from '../../Context/UserProvider';
 
 const Category = ({ title, img, prefix, onEdit, onDelete, id }) => {
 
@@ -18,51 +19,57 @@ const Category = ({ title, img, prefix, onEdit, onDelete, id }) => {
         setMenuOpen(false)
     }
 
+    const { user } = useUser();
+    const userRoles = user?.userRoles || [];
+    const isAdmin = userRoles.includes("Admin");
+
     return (
-        <div className="category  position-relative  px-4">
+        <div className="category  position-relative  px-1 overflow-hidden">
 
-            <div
-                className='position-absolute  p-1'
-                style={{ right: "0px", top: "5px", zIndex: "10px", cursor: "pointer" }}
-                onClick={() => setMenuOpen(!menuOpen)}
-            >
-
-                <div className="icon-wrapper">
-                    <span className={`icon ${!menuOpen ? "show" : "hide"}`}>
-                        <SlOptionsVertical size={20} />
-                    </span>
-                    <span className={`icon ${menuOpen ? "show" : "hide"}`}>
-                        <IoMdClose size={25} />
-                    </span>
-                </div>
-
-
-            </div>
-
-            {menuOpen && (
+            {isAdmin && (
                 <div
-                    className="position-absolute bg-white shadow rounded  p-2 w-50 "
-                    style={{ right: "40px", top: "5px", zIndex: 999 }}
+                    className='position-absolute  p-1'
+                    style={{ right: "0px", top: "5px", zIndex: "10px", cursor: "pointer" }}
+                    onClick={() => setMenuOpen(!menuOpen)}
                 >
-                    <button
-                        className=" btn btn-outline-info fw-bold w-100 text-start "
-                        onClick={() => {
-                            onEdit();
-                            setMenuOpen(false);
-                        }}
-                    >
-                        Edit
-                    </button>
-                    <button
-                        className=" btn btn-outline-danger fw-bold w-100 text-start mt-2 border-top pt-2"
-                        onClick={handleDelete}
-                    >
-                        Delete
-                    </button>
+
+                    <div className="icon-wrapper">
+                        <span className={`icon ${!menuOpen ? "show" : "hide"}`}>
+                            <SlOptionsVertical size={20} />
+                        </span>
+                        <span className={`icon ${menuOpen ? "show" : "hide"}`}>
+                            <IoMdClose size={25} />
+                        </span>
+                    </div>
                 </div>
             )}
 
+            {isAdmin &&
+                menuOpen && (
+                    <div
+                        className="position-absolute bg-white shadow rounded  p-2 w-50 "
+                        style={{ right: "40px", top: "5px", zIndex: 999 }}
+                    >
+                        <button
+                            className=" btn btn-outline-info fw-bold w-100 text-start "
+                            onClick={() => {
+                                onEdit();
+                                setMenuOpen(false);
+                            }}
+                        >
+                            Edit
+                        </button>
+                        <button
+                            className=" btn btn-outline-danger fw-bold w-100 text-start mt-2 border-top pt-2"
+                            onClick={handleDelete}
+                        >
+                            Delete
+                        </button>
+                    </div>
+                )}
+
             <Link to={`/categories/products/${prefix}`} className="link  p-3 ">
+
                 <div className="categoryImg">
 
                     {img ?
@@ -80,9 +87,7 @@ const Category = ({ title, img, prefix, onEdit, onDelete, id }) => {
                         )
                     }
 
-
                 </div>
-
 
                 <h4 className="categoryTitle">{title}</h4>
             </Link>

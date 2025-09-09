@@ -15,7 +15,6 @@ const useCategories = () => {
             setLoading(true);
             const res = await axios.get(`http://clicktobuy.runasp.net/api/Categories/GetAllCategories`);
             const data = res.data;
-            console.log(data);
             setCategories(data);
         } catch (err) {
             setError(err.message);
@@ -45,8 +44,8 @@ const useCategories = () => {
                 { headers: { "Content-Type": "multipart/form-data", } }
             )
 
-            console.log(" AddCategory response:", res.data);
-
+            // Optimistic update
+            setCategories((prev) => [...prev, res.data]);
             await GetAllCategories()
 
             return res.data
@@ -75,8 +74,9 @@ const useCategories = () => {
                 { headers: { "Content-Type": "multipart/form-data", }, }
             );
 
-            console.log("Category Updated with Image:", res.data);
-
+            setCategories((prev) =>
+                prev.map((c) => (c.categoryId === id ? res.data : c))
+            );
             await GetAllCategories();
 
             return res.data;
@@ -118,7 +118,6 @@ const useCategories = () => {
 
             setLoading(true);
             const res = await axios.delete(`http://clicktobuy.runasp.net/api/Categories/${id}`);
-            console.log("Category Deleted:", res.data);
             setCategories((prev) => prev.filter(c => c.categoryId !== id));
 
             await GetAllCategories();
