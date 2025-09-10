@@ -24,12 +24,12 @@ const Category = ({ title, img, prefix, onEdit, onDelete, id }) => {
     const isAdmin = userRoles.includes("Admin");
 
     return (
-        <div className="category  position-relative  px-1 overflow-hidden">
+        <div className="category  position-relative  px-1 overflow-hidden  ">
 
             {isAdmin && (
                 <div
-                    className='position-absolute  p-1'
-                    style={{ right: "0px", top: "5px", zIndex: "10px", cursor: "pointer" }}
+                    className='position-absolute '
+                    style={{ right: "0", top: "5px", zIndex: "10px", cursor: "pointer" }}
                     onClick={() => setMenuOpen(!menuOpen)}
                 >
 
@@ -47,8 +47,8 @@ const Category = ({ title, img, prefix, onEdit, onDelete, id }) => {
             {isAdmin &&
                 menuOpen && (
                     <div
-                        className="position-absolute bg-white shadow rounded  p-2 w-50 "
-                        style={{ right: "40px", top: "5px", zIndex: 999 }}
+                        className="position-absolute bg-white shadow rounded  p-2 w-75 "
+                        style={{ right: "30px", top: "5px", zIndex: 999 }}
                     >
                         <button
                             className=" btn btn-outline-info fw-bold w-100 text-start "

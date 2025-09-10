@@ -1,45 +1,79 @@
 import React, { useState } from "react";
 import "./stylesheet.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import UseAuth from "../Hooks/useAuth/UseAuth";
+import { useUser } from "../Context/UserProvider";
+import { ToastContainer, toast } from "react-toastify";
 
 const Register = () => {
 
-  const { register, loading, error } = UseAuth();
-
+  const { RegisterFunc, loading, error } = useUser();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const errors = [];
 
+    if (password.length < 8) {
+      errors.push("Password must be at least 8 characters long.");
+    }
+    if (!/[A-Z]/.test(password)) {
+      errors.push("Password must include at least one uppercase letter.");
+    }
+    if (!/[0-9]/.test(password)) {
+      errors.push("Password must include at least one number.");
+    }
+    if (!/[@$!%*?&]/.test(password)) {
+      errors.push("Password must include at least one special character.");
+    }
     if (password !== confirmPassword) {
-      alert(" Passwords don't match! ");
+      errors.push("Password and ConfirmPassword don't match.");
+    }
+
+
+    const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      errors.push("Please enter a valid email address ");
+    }
+
+
+    if (errors.length > 0) {
+      errors.forEach((err) => toast.error(err, { draggable: true, draggablePercent: 50, draggableDirection: "x" }));
       return;
     }
 
-    const result = await register({
+
+    const result = await RegisterFunc({
+      email,
+      password,
       firstName,
       lastName,
-      email,
-      address,
-      password,
-      confirmPassword,
     });
 
     if (result) {
+      toast.success("Account created successfully 🎉");
       console.log("✅ Registered successfully:", result);
-      // navigate("/login")
+      navigate("/")
+
+      // Reset
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
     }
   };
 
   return (
     <div className="register-fullscreen d-flex justify-content-center align-items-center">
+      <ToastContainer />
       <div className="form-container">
         <h2 className="fw-bold text-center mb-4 text-dark">Create an Account</h2>
         <form onSubmit={handleSubmit}>
@@ -52,7 +86,7 @@ const Register = () => {
                 type="text"
                 className="form-control shadow-sm"
                 id="firstName"
-                placeholder="Enter Your First Name"
+                placeholder="Enter your first name "
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
               />
@@ -66,7 +100,7 @@ const Register = () => {
                 type="text"
                 className="form-control shadow-sm"
                 id="lastName"
-                placeholder="Enter Your Last Name"
+                placeholder="Enter your last name "
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
               />
@@ -86,20 +120,6 @@ const Register = () => {
               />
             </div>
 
-            <div className="col-12">
-              <label htmlFor="address" className="form-label fw-semibold">
-                Address
-              </label>
-              <input
-                type="text"
-                className="form-control shadow-sm"
-                id="address"
-                placeholder="123 street Elmansoura"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-              />
-            </div>
-
             <div className="col-md-6">
               <label htmlFor="password" className="form-label fw-semibold">
                 Password
@@ -108,7 +128,7 @@ const Register = () => {
                 type="password"
                 className="form-control shadow-sm"
                 id="password"
-                placeholder="********"
+                placeholder="At least 8 chars, 1 uppercase, 1 number, 1 special char"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -122,13 +142,14 @@ const Register = () => {
                 type="password"
                 className="form-control shadow-sm"
                 id="confirmPassword"
-                placeholder="********"
+                placeholder="Re-enter your password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
           </div>
 
+          {/* button */}
           <div className="d-flex justify-content-center gap-3 mt-4 flex-wrap">
             <button
               type="submit"

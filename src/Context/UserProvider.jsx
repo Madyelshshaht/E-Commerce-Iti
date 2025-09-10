@@ -12,14 +12,55 @@ const UserProvider = ({ children }) => {
 
 
     const [user, setUser] = useState(null)
-
     const [userRole, setUserRole] = useState("")
-
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-
     const [token, setToken] = useState(localStorage.getItem("token"));
+
+
+    const RegisterFunc = async ({email, password, firstName, lastName}) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const res = await axios.post(`http://clicktobuy.runasp.net/api/Auth/Register`,
+                {
+                    email,
+                    password,
+                    firstName,
+                    lastName
+                },
+                { headers: { "Content-Type": "application/json" } }
+            )
+
+
+            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("refreshToken", res.data.refreshToken);
+            localStorage.setItem("user", JSON.stringify(res.data));
+
+            setUser(res.data);
+            setToken(res.data.token);
+
+            return res.data;
+
+        }
+        catch (err) {
+            if (err.response && err.response.data) {
+                setError(
+                    typeof err.response.data === "string"
+                        ? err.response.data
+                        : err.response.data.message || "Registration failed"
+                );
+            } else {
+                setError("Something went wrong, please try again");
+            }
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }
+
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
@@ -50,7 +91,7 @@ const UserProvider = ({ children }) => {
 
             setUser(res.data)
             setToken(res.data.token);
-            
+
 
             return res.data;
         } catch (err) {
@@ -145,10 +186,8 @@ const UserProvider = ({ children }) => {
         };
     }, [token]);
 
-
-
     return (
-        <UserContext.Provider value={{ userRole, setUserRole, user, Login, Logout, token, loading, error }} >
+        <UserContext.Provider value={{ userRole, setUserRole, user, Login, Logout, token, loading, error, RegisterFunc }} >
             {children}
         </UserContext.Provider>
     )

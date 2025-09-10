@@ -9,8 +9,8 @@
 
     .categoryImg {
         /* skeleton approach gary color */
-        width: 180px;
-        height: 180px;
+        width: 200px;
+        height: 200px;
         overflow: hidden;
         border-radius: 50%;
         background-color: #f2f2f2;
@@ -26,10 +26,22 @@
         margin-top: 10px;
     }
 
+    @media screen and (max-width: 450px) {
+        .categoryImg {
+            width: 160px;
+            height: 160px;
+        }
+    }
+
     @media screen and (max-width: 400px) {
         .categoryImg {
             width: 120px;
             height: 120px;
+        }
+
+        .icon-wrapper {
+            position: relative;
+            right: -5px;
         }
     }
 

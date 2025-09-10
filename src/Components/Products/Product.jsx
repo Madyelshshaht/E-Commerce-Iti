@@ -11,6 +11,9 @@ import ButtonAddToCart from '../Common/ButtonAddToCart';
 import { useUser } from '../../Context/UserProvider';
 import { connect } from 'react-redux';
 
+
+import "./style.css"
+
 const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDelete }) => {
 
     const { cart, addToCart } = UseCart();
@@ -56,12 +59,12 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
 
 
     return (
-        <div className='d-flex justify-content-center align-items-center w-100 mb-2 position-relative overflow-hidden'>
+        <div className='d-flex justify-content-center align-items-center w-100 mb-2 position-relative overflow-hidden  pro'>
 
             {isAdmin && (
                 <div
-                    className='position-absolute  p-1'
-                    style={{ right: "0px", top: "5px", zIndex: "10px", cursor: "pointer" }}
+                    className='dots  '
+                    // style={{ right: "0px", top: "5px", zIndex: "10px", cursor: "pointer" }}
                     onClick={() => setMenuOpen(!menuOpen)}
                 >
 
@@ -84,8 +87,8 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
             {isAdmin && 
             menuOpen && (
                 <div
-                    className="position-absolute bg-white shadow rounded  p-2 w-50 "
-                    style={{ right: "40px", top: "5px", zIndex: 999 }}
+                    className="position-absolute bg-white shadow rounded p-1 w-50 "
+                    style={{ right: "30px", top: "5px", zIndex: 999 }}
                 >
                     <button
                         className=" btn btn-outline-info fw-bold w-100 text-start "
@@ -96,6 +99,7 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
                     >
                         Edit
                     </button>
+
                     <button
                         className=" btn btn-outline-danger fw-bold w-100 text-start mt-2 border-top pt-2"
                         onClick={handleDelete}

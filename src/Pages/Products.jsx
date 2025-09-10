@@ -76,7 +76,7 @@ const Products = () => {
 
     return (
         <>
-            <div className="d-flex justify-content-between align-items-center mb-2 ">
+            <div className="d-flex justify-content-between align-items-center mb-2 overflow-hidden">
                 <h1>Products {prefix}</h1>
                 {isAdmin && (
                     <button
@@ -113,7 +113,7 @@ const Products = () => {
                                 lg={3}
                                 md={4}
                                 sm={6}
-                                xs={6}
+                                xs={12}
                                 className="my-2"
                             >
                                 <Product

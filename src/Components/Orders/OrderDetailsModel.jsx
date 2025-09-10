@@ -22,7 +22,7 @@ const OrderDetailsModel = ({ showModal, setShowModal, orderDetails, selectedOrde
                                 {orderDetails?.map((o, idx) => (
                                     <div key={idx}>
                                         <div className='my-3 d-flex align-items-center gap-4'>
-                                            <img src={`data:image/png;base64,${o.productImage}`} alt="product" width={150} height={200} />
+                                            <img src={`data:image/png;base64,${o.productImage}`} alt="product" width={120} height={130} />
                                             <div>
                                                 <h4>Title: {o.productTitle}</h4>
                                                 <h5>Price: {o.productPrice.toFixed(2)} EGP</h5>
