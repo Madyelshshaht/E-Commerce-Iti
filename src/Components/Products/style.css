@@ -1,7 +1,15 @@
-@media screen and (max-width: 400px) {
+.dots {
+    position: absolute;
+    right: 0;
+    top: 5px;
+    z-index: 10px;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 450px) {
     .product img {
-        width: 120px;
-        height: 120px;
+        width: 130px;
+        height: 130px;
     }
 
     .product .div {
@@ -17,4 +25,9 @@
         font-size: 13px;
     }
 
+    .dots {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+    }
 }

@@ -75,7 +75,7 @@ const Categories = () => {
 
     return (
         <>
-            <div className="d-flex justify-content-between align-items-center mb-5 overflow-hidden">
+            <div className="d-flex justify-content-between align-items-center mb-5 overflow-hidden ">
                 <h1>Categories</h1>
 
                 {isAdmin && (
@@ -109,7 +109,7 @@ const Categories = () => {
                             lg={3}
                             md={4}
                             xs={6}
-                            className="d-flex justify-content-center mb-5 mt-3"
+                            className="d-flex justify-content-center mb-5 mt-3 "
                             key={cat.categoryId}
                         >
                             <Category
