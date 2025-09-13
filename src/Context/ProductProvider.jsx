@@ -1,21 +1,27 @@
 import axios, { AxiosError } from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { useUser } from "./UserProvider";
+import api from "../services/axios-global";
 
 const ProductContext = createContext();
 
 export const useProduct = () => useContext(ProductContext);
 
 const ProductProvider = ({ children }) => {
+
+    const { token } = useUser();
+
     const [product, setProduct] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+
     const GetProducts = async () => {
         try {
             setLoading(true);
-            const res = await axios.get(
-                `http://clicktobuy.runasp.net/api/Products/GetAllProucts`
+            const res = await api.get(
+                `/Products/GetAllProucts`
             );
             const data = res.data;
             setProduct(data);
@@ -36,7 +42,7 @@ const ProductProvider = ({ children }) => {
         description,
         price,
         stockQuantity,
-        categoryId,
+        categoryId
     ) => {
         try {
             setLoading(true);
@@ -49,12 +55,16 @@ const ProductProvider = ({ children }) => {
             formData.append("categoryId", categoryId);
             formData.append("image", image);
 
-            const res = await axios.post(
-                `http://clicktobuy.runasp.net/api/Products/AddProdcut`,
+            const res = await api.post(
+                `/Products/AddProdcut`,
                 formData,
-                { headers: { "Content-Type": "multipart/form-data" } }
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        // Authorization: `Bearer ${token}`,
+                    },
+                }
             );
-
 
             // setProduct((prev) => [...prev, res.data]);
             await GetProducts();
@@ -77,7 +87,7 @@ const ProductProvider = ({ children }) => {
         categoryId
     ) => {
         try {
-            setLoading(true)
+            setLoading(true);
 
             const formData = new FormData();
             formData.append("title", title);
@@ -87,11 +97,16 @@ const ProductProvider = ({ children }) => {
             formData.append("categoryId", categoryId);
             if (image) formData.append("image", image);
 
-            const res = await axios.put(
-                `http://clicktobuy.runasp.net/api/Products/${productId}`,
+            const res = await api.put(
+                `/Products/${productId}`,
                 formData,
-                { headers: { "Content-Type": "multipart/form-data", }, }
-            )
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        // Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
 
             setProduct((prev) =>
                 prev.map((p) => (p.productId === productId ? res.data : p))
@@ -100,30 +115,36 @@ const ProductProvider = ({ children }) => {
             await GetProducts();
 
             return res.data;
-
         } catch (error) {
-            setError(error.message)
+            setError(error.message);
             throw error;
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const RemoveProduct = async (productId) => {
         const { isConfirmed: step1 } = await Swal.fire({
-            title: 'Remove Product?',
+            title: "Remove Product?",
             text: "Are you sure you want to remove this Product?",
-            icon: 'warning',
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, remove it!',
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, remove it!",
         });
         if (!step1) return;
         try {
             setLoading(true);
-            const res = await axios.delete(`http://clicktobuy.runasp.net/api/Products/${productId}`);
-            setProduct((prev) => prev.filter(p => p.productId !== productId));
+            const res = await api.delete(
+                `/Products/${productId}`,
+                {
+                    headers: {
+                        // Authorization: `Bearer ${token}`,
+                    }
+                }
+            );
+            setProduct((prev) => prev.filter((p) => p.productId !== productId));
 
             await GetProducts();
             return res.data;
@@ -133,10 +154,21 @@ const ProductProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     return (
-        <ProductContext.Provider value={{ product, loading, error, AddProduct, UpdateProduct, RemoveProduct }}>
+        <ProductContext.Provider
+            value={{
+                product,
+                loading,
+                error,
+                setProduct,
+                AddProduct,
+                UpdateProduct,
+                RemoveProduct,
+                GetProducts,
+            }}
+        >
             {children}
         </ProductContext.Provider>
     );

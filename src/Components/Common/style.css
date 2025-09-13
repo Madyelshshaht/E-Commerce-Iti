@@ -2,3 +2,6 @@
 .btn_add{
     font-size: 10px;
 }
+.btn-heart{
+    cursor: pointer;
+}

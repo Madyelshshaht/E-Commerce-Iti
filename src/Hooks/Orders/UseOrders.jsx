@@ -1,32 +1,30 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react'
-import { useUser } from '../../Context/UserProvider';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useUser } from "../../Context/UserProvider";
+import { useProduct } from "../../Context/ProductProvider";
+import api from "../../services/axios-global";
 
 const UseOrders = () => {
-
-    const { user } = useUser();
+    const { user, token } = useUser();
     const userId = user?.id;
-    console.log(userId)
 
+    const { GetProducts } = useProduct();
 
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-
     const [orderDetails, setOrderDetails] = useState(null);
-    console.log("Order Details:", orderDetails)
 
     const GetUserOrders = async () => {
         if (!userId) return;
         setLoading(true);
         setError(null);
         try {
-            const res = await axios.get(
-                `http://clicktobuy.runasp.net/api/Orders/GetUserOrders/${userId}`
+            const res = await api.get(
+                `/Orders/GetUserOrders/${userId}`
             );
             setOrders(res.data);
-            console.log(res.data)
         } catch (err) {
             setError(err.message || "Something went wrong");
         } finally {
@@ -36,20 +34,23 @@ const UseOrders = () => {
 
     useEffect(() => {
         GetUserOrders();
-    }, [userId])
-
+    }, [userId]);
 
     const PlaceOrder = async () => {
         setLoading(true);
         try {
-            const res = await axios.post(`http://clicktobuy.runasp.net/api/Orders/PlaceOrder/${userId}`, {},
+            const res = await api.post(
+                `/Orders/PlaceOrder/${userId}`,
+                {},
                 {
                     headers: {
-                        "Content-Type": "application/json"
-                    }
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
             );
             if (res.status === 204 || res.status === 200) {
+                await GetProducts();
                 return true;
             }
             return false;
@@ -58,72 +59,88 @@ const UseOrders = () => {
         } finally {
             setLoading(false);
         }
-
-    }
+    };
 
     const OrderDetails = async (orderId) => {
-        setLoading(true)
+        setLoading(true);
         try {
-            const res = await axios.get(`http://clicktobuy.runasp.net/api/Orders/GetProductsDetails/${userId}`,
+            const res = await api.get(
+                `/Orders/GetProductsDetails/${userId}`,
                 {
-                    params: { orderId }
-                })
-            console.log("Order details:", res.data);
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { orderId },
+                }
+            );
             setOrderDetails(res.data);
             return res.data;
         } catch (error) {
-            setError("Error in Show Details:", error.response?.data || error.message)
+            setError("Error in Show Details:", error.response?.data || error.message);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
-
+    };
 
     const RemoveOrder = async (orderId) => {
-        setLoading(true)
+        setLoading(true);
         try {
-            const res = await axios.delete(`http://clicktobuy.runasp.net/api/Orders/DeleteUserOrder/${userId}`,
+            const res = await api.delete(
+                `/Orders/DeleteUserOrder/${userId}`,
                 {
-                    params: { orderId }
-                })
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { orderId },
+                }
+            );
 
             if (res.status === 200 || res.status === 204) {
                 setOrders((prevOrders) =>
                     prevOrders.filter((order) => order.orderId !== orderId)
                 );
+
+                await GetProducts();
                 return true;
             }
 
             return false;
         } catch (error) {
-            setError("Error removing order:", error.response?.data || error.message)
+            setError("Error removing order:", error.response?.data || error.message);
             return false;
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const ClearOrders = async () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await axios.delete(`http://clicktobuy.runasp.net/api/Orders/ClearUserOrders/${userId}`)
+            const res = await api.delete(
+                `/Orders/ClearUserOrders/${userId}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
             if (res.status === 204 || res.status === 200) {
                 setOrders([]);
+                await GetProducts();
                 return true;
             }
             return false;
         } catch (error) {
-            setError(err.response?.data || err.message || "Something went wrong");
+            setError(error.response?.data || error.message || "Something went wrong");
             return false;
         } finally {
             setLoading(false);
         }
-    }
+    };
 
+    return {
+        orders,
+        loading,
+        error,
+        orderDetails,
+        PlaceOrder,
+        ClearOrders,
+        RemoveOrder,
+        OrderDetails,
+    };
+};
 
-
-    return { orders, loading, error, orderDetails, PlaceOrder, ClearOrders, RemoveOrder, OrderDetails };
-}
-
-export default UseOrders
+export default UseOrders;

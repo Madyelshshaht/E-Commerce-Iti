@@ -1,7 +1,7 @@
 import React from "react";
 import category1 from "../../assets/Cat_Image/download.jpg";
 import category2 from "../../assets/Cat_Image/girl.jpg";
-import category3 from "../../assets/Cat_Image/watch.jpg";
+import category3 from "../../assets/Cat_Image/bag.jpeg";
 
 
 
@@ -69,7 +69,7 @@ const HomeCatSection = () => {
                             <div className="category-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column gap-4 justify-content-center align-items-center">
                                 <h1 className="text-white">Explore Accessories Products</h1>
                                 <Link
-                                    to={`/categories/products/watches`}
+                                    to={`/categories/products/bags`}
                                     className="btn btn-light  rounded rounded-2 py-2 px-4"
                                 >
                                     Explore

@@ -3,7 +3,6 @@ import { useUser } from '../Context/UserProvider';
 
 const Profile = () => {
     const { user } = useUser();
-    console.log(user)
 
     const userRoles = user?.userRoles || [];
     const isAdmin = userRoles.includes("Admin");
