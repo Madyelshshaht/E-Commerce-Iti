@@ -5,15 +5,14 @@ import CartItem from '../Components/Cart/CartItem';
 import Lottie from "lottie-react";
 import EmptyCard from "../assets/LotiFiles/Empty_Cart.json"
 import Success from "../assets/LotiFiles/Success.json"
-import UseAuth from '../Hooks/useAuth/UseAuth';
 import { Spinner } from 'react-bootstrap';
 import UseOrders from '../Hooks/Orders/UseOrders';
 import { useState } from 'react';
+import { ToastContainer } from 'react-toastify';
 
 const Cart = () => {
     const { cart, getTotalPrice, loading, clearCart_LogOut } = UseCart();
 
-    console.log("Cart", cart)
 
     const { PlaceOrder } = UseOrders()
     const [orderSuccess, setOrderSuccess] = useState(false);
@@ -31,7 +30,9 @@ const Cart = () => {
     if (loading) {
         return (
             <div className="d-flex justify-content-center align-items-center mt-5">
-                <Spinner animation="border" size="lg" variant='info' />
+                <Spinner animation="border" size="lg" variant="info">
+                    <span className="visually-hidden">Loading Cart...</span>
+                </Spinner>
             </div>
         );
     }
@@ -59,6 +60,7 @@ const Cart = () => {
 
     return (
         <div className="container mt-4">
+            <ToastContainer />
             {
                 cart.items.map((item, idx) => (
                     <CartItem

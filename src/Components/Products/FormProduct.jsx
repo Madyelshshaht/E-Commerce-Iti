@@ -4,7 +4,7 @@ import { Button, Form } from "react-bootstrap";
 import { CgCloseO } from "react-icons/cg";
 import useCategories from "../../Hooks/useCategories/useCategories";
 
-const FormProduct = ({ toggle, setToggle, initialData, setInitialData, AddProduct, UpdateProduct }) => {
+const FormProduct = ({ toggle, setToggle, initialData, setInitialData, AddProduct, UpdateProduct  }) => {
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -110,7 +110,7 @@ const FormProduct = ({ toggle, setToggle, initialData, setInitialData, AddProduc
 
                     <h2 className="text-center mt-3">Add Product </h2>
 
-                    <Form className="p-4" onSubmit={handelSubmit}>
+                    <Form className="p-4" onSubmit={handelSubmit} >
 
                         <Form.Group className="mb-3">
                             <Form.Label>Title</Form.Label>

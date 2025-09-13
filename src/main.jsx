@@ -8,13 +8,16 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import ProductProvider from './Context/ProductProvider.jsx';
 import CartProvider from './Context/CartProvider.jsx';
 import UserProvider from './Context/UserProvider.jsx';
+import { WishlistProvider } from './Context/Wishlist/WishlistProvider.jsx';
 
 
 createRoot(document.getElementById('root')).render(
   <UserProvider>
     <ProductProvider>
       <CartProvider>
-        <Router />
+        <WishlistProvider>
+          <Router />
+        </WishlistProvider>
       </CartProvider>
     </ProductProvider>
   </UserProvider>

@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import "./stylesheet.css";
 import { Link, useNavigate } from "react-router-dom";
-import UseAuth from "../Hooks/useAuth/UseAuth";
 import { useUser } from "../Context/UserProvider";
 import { ToastContainer, toast } from "react-toastify";
+import { Spinner } from "react-bootstrap";
+
+
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/bootstrap.css";
 
 const Register = () => {
 
@@ -14,6 +18,7 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [phone, setPhone] = useState("");
 
   const navigate = useNavigate();
 
@@ -21,55 +26,86 @@ const Register = () => {
     e.preventDefault();
     const errors = [];
 
-    if (password.length < 8) {
+    // ✅ Sanitize function ضد XSS
+    const sanitizeInput = (value) => value.replace(/[<>]/g, "").trim();
+
+    const safeFirstName = sanitizeInput(firstName);
+    const safeLastName = sanitizeInput(lastName);
+    const safeEmail = sanitizeInput(email);
+    const safePassword = sanitizeInput(password);
+    const safeConfirmPassword = sanitizeInput(confirmPassword);
+
+
+    const phoneRegex = /^[0-9]{10,15}$/;
+
+    if (!phoneRegex.test(phone)) {
+      errors.push("Please enter a valid phone number.");
+    }
+
+    const nameRegex = /^[a-zA-Z\s'-]+$/;
+
+    if (!nameRegex.test(safeFirstName)) {
+      errors.push("First name can only contain letters.");
+    }
+
+    if (!nameRegex.test(safeLastName)) {
+      errors.push("Last name can only contain letters.");
+    }
+
+    if (safePassword.length < 8) {
       errors.push("Password must be at least 8 characters long.");
     }
-    if (!/[A-Z]/.test(password)) {
+    if (!/[A-Z]/.test(safePassword)) {
       errors.push("Password must include at least one uppercase letter.");
     }
-    if (!/[0-9]/.test(password)) {
+    if (!/[0-9]/.test(safePassword)) {
       errors.push("Password must include at least one number.");
     }
-    if (!/[@$!%*?&]/.test(password)) {
-      errors.push("Password must include at least one special character.");
+    if (!/[@$!%*?&]/.test(safePassword)) {
+      errors.push("Password must include at least one special character (@$!%*?&).");
     }
-    if (password !== confirmPassword) {
-      errors.push("Password and ConfirmPassword don't match.");
-    }
-
-
-    const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
-    if (!emailRegex.test(email)) {
-      errors.push("Please enter a valid email address ");
+    if (safePassword !== safeConfirmPassword) {
+      errors.push("Password and Confirm Password don't match.");
     }
 
+    const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+    if (!emailRegex.test(safeEmail)) {
+      errors.push("Please enter a valid email address.");
+    }
 
     if (errors.length > 0) {
-      errors.forEach((err) => toast.error(err, { draggable: true, draggablePercent: 50, draggableDirection: "x" }));
+      errors.forEach((err) =>
+        toast.error(err, {
+          draggable: true,
+          draggablePercent: 50,
+          draggableDirection: "x",
+        })
+      );
       return;
     }
 
-
     const result = await RegisterFunc({
-      email,
-      password,
-      firstName,
-      lastName,
+      email: safeEmail,
+      password: safePassword,
+      firstName: safeFirstName,
+      lastName: safeLastName,
+      phoneNumber: phone,
     });
 
     if (result) {
-      toast.success("Account created successfully 🎉");
-      console.log("✅ Registered successfully:", result);
-      navigate("/")
+      toast.success("🎉 Account created successfully!");
+      navigate("/");
 
-      // Reset
+      // Reset form
       setFirstName("");
       setLastName("");
       setEmail("");
       setPassword("");
       setConfirmPassword("");
+      setPhone("");
     }
   };
+
 
   return (
     <div className="register-fullscreen d-flex justify-content-center align-items-center">
@@ -106,7 +142,7 @@ const Register = () => {
               />
             </div>
 
-            <div className="col-12">
+            <div className="col-md-6">
               <label htmlFor="email" className="form-label fw-semibold">
                 Email
               </label>
@@ -121,6 +157,26 @@ const Register = () => {
             </div>
 
             <div className="col-md-6">
+              <label htmlFor="phone" className="form-label fw-semibold">
+                Phone
+              </label>
+              <PhoneInput
+                country={"eg"}
+                onlyCountries={["eg"]}
+                disableCountryCode={true} 
+                disableDropdown={true}
+                value={phone}
+                onChange={(phone) => setPhone(phone)}
+                inputProps={{
+                  name: "phone",
+                  required: true,
+                  className: "form-control shadow-sm w-100",
+                }}
+                placeholder="Enter your Egyptian phone number"
+              />
+            </div>
+
+            <div className="col-md-6">
               <label htmlFor="password" className="form-label fw-semibold">
                 Password
               </label>
@@ -128,7 +184,7 @@ const Register = () => {
                 type="password"
                 className="form-control shadow-sm"
                 id="password"
-                placeholder="At least 8 chars, 1 uppercase, 1 number, 1 special char"
+                placeholder="8 chars, 1 uppercase, 1 number, 1 special char"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -153,10 +209,10 @@ const Register = () => {
           <div className="d-flex justify-content-center gap-3 mt-4 flex-wrap">
             <button
               type="submit"
-              className="btn btn-primary px-4 shadow w-100 w-md-auto fw-bold py-2"
+              className="btn btn-primary px-4 shadow w-100 w-md-auto fw-semibold py-2"
               disabled={loading}
             >
-              {loading ? "Registering..." : "Register"}
+              {loading ? (<span className="d-flex justify-content-center align-items-center gap-2"> Registering... <Spinner size="sm" /> </span>) : "Register"}
             </button>
           </div>
 

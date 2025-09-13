@@ -31,7 +31,7 @@ const ProductDetails = () => {
 
 
                         <div className="col-md-6 d-flex flex-column gap-4 justify-content-center shadow py-4 px-4 my-sm-4 ">
-                            <h5><span className="fw-bold p-2">Product ID:</span> <span className="badge bg-info"> {id} </span></h5>
+                            {/* <h5><span className="fw-bold p-2">Product ID:</span> <span className="badge bg-info"> {id} </span></h5> */}
                             <h3>
                                 <span className="fw-bold ">Title:</span> <span className="badge bg-info">{specificProduct.title}</span>
                             </h3>

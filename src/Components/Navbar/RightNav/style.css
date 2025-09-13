@@ -1,10 +1,19 @@
-.quantity {
+.quantity-cart {
     position: absolute;
     top: -5px;
     right: 3px;
     width: 20px;
     height: 20px;
     background-color: #0dcaf0;
+}
+
+.quantity-whis {
+    position: absolute;
+    top: -5px;
+    right: 3px;
+    width: 20px;
+    height: 20px;
+    background-color: #ba3699;
 }
 
 
@@ -46,5 +55,16 @@
     100% {
         transform: scale(1);
         ;
+    }
+}
+
+
+.cart , .wish {
+    display: block;
+}
+
+@media (max-width: 450px) {
+    .cart, .wish {
+        display: none;
     }
 }

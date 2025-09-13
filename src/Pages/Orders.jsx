@@ -18,7 +18,6 @@ const Orders = () => {
         OrderDetails,
     } = UseOrders();
 
-    console.log("Orders:", orders);
 
     const [showModal, setShowModal] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState(null);
@@ -62,8 +61,10 @@ const Orders = () => {
 
     if (loading)
         return (
-            <div className="text-center mt-5">
-                <Spinner variant="info" className="mt-5" />
+            <div className="d-flex justify-content-center align-items-center mt-5">
+                <Spinner animation="border" size="lg" variant="info" className="mt-5">
+                    <span className="visually-hidden">Loading Orders...</span>
+                </Spinner>
             </div>
         );
 
@@ -88,11 +89,11 @@ const Orders = () => {
                     <div>
                         {orders.map((order, idx) => (
                             <div key={order.orderId} className="my-3">
-                                <div className="bg-light p-3 d-flex align-items-center gap-5">
-                                    <span>{idx + 1} - Order</span>
-                                    <div className="d-flex align-items-center gap-4">
+                                <div className="bg-light p-3 d-flex justify-content-between align-items-center gap-5 ">
+                                    <span className="fw-bold">{idx + 1} - Order</span>
+                                    <div className="d-flex flex-lg-row flex-column align-items-center gap-4">
                                         <button
-                                            className="btn btn-success"
+                                            className="btn btn-success px-3"
                                             onClick={() => hadnleOrderDetails(order.orderId)}
                                         >
                                             Order Details
@@ -121,10 +122,13 @@ const Orders = () => {
                             Clear Orders
                         </button>
 
-                        <div className="mt-5">
+                        <div className="mt-5 d-flex flex-sm-row flex-column justify-content-between align-items-center gap-2">
                             <h3>
                                 <span className="fst-italic">Total Price</span> : {TotalPrice} EGP
                             </h3>
+                            <h5>
+                                <span className="fst-italic">Shipping within 2 Days</span>
+                            </h5>
                         </div>
 
 
