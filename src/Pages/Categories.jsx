@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 
 import FormCategory from "../Components/Categories/FormCategory";
@@ -32,7 +32,6 @@ const Categories = () => {
     const [searchData, setSearchData] = useState(null);
 
 
-    console.log("Categories:", categories);
 
 
 
@@ -41,9 +40,15 @@ const Categories = () => {
         setToggle(!toggle);
     };
 
+
     const handleEdit = (cat) => {
         setInitialData(cat);
         setToggle(true);
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth", 
+        });
     };
 
     const displayedProducts = searchData !== null ? searchData : categories;

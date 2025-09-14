@@ -8,7 +8,7 @@ import NoData from "../assets/LotiFiles/No_Data.json";
 import ProductSkeleton from "../Components/Feedback/Skeleton/ProductSkeleton";
 
 import FormProduct from "../Components/Products/FormProduct";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import SearchProduct from "../Components/Products/SearchProduct"
 import { useUser } from "../Context/UserProvider";
@@ -18,9 +18,6 @@ const Products = () => {
 
     const { product, loading, error, RemoveProduct, AddProduct, UpdateProduct } = useProduct();
 
-    console.log(product)
-
-    console.log(product)
 
     const [toggle, setToggle] = useState(false);
 
@@ -33,9 +30,15 @@ const Products = () => {
     //     setToggle(!toggle);
     // };
 
+
     const handleEdit = (pro) => {
         setInitialData(pro);
         setToggle(true);
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth", 
+        });
     };
 
     const filteredProducts = useMemo(() => {
@@ -113,7 +116,7 @@ const Products = () => {
                                 lg={3}
                                 md={4}
                                 sm={6}
-                                xs={12}
+                                xs={6}
                                 className="my-2"
                             >
                                 <Product

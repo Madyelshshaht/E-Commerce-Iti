@@ -4,7 +4,7 @@ import { Button, Form } from "react-bootstrap";
 import { CgCloseO } from "react-icons/cg";
 import useCategories from "../../Hooks/useCategories/useCategories";
 
-const FormCategory = ({ toggle, setToggle, initialData, setInitialData, AddCategory, EditCategory }) => {
+const FormCategory = ({ toggle, setToggle, initialData, setInitialData, AddCategory, EditCategory  }) => {
 
 
     const [title, setTitle] = useState("");

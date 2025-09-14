@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useUser } from './UserProvider';
+import { toast } from 'react-toastify';
+import api from '../services/axios-global';
 
 
 const cartContext = createContext(null);
@@ -24,7 +26,8 @@ const CartProvider = ({ children }) => {
         if (!user?.id) return;
         try {
             setLoading(true);
-            const res = await axios.get(`http://clicktobuy.runasp.net/api/ShoppingCarts/GetAllShoppingCart`, {
+            const res = await api.get(`/ShoppingCarts/GetAllShoppingCart`, {
+                // headers: { Authorization: `Bearer ${token}` },
                 params: { userId: user.id }
             });
             let data = res.data
@@ -61,10 +64,13 @@ const CartProvider = ({ children }) => {
         setLoading(true);
         try {
 
-            await axios.post(
-                `http://clicktobuy.runasp.net/api/ShoppingCarts/AddtoShoopingCart`,
+            await api.post(
+                `/ShoppingCarts/AddtoShoopingCart`,
                 null,
-                { params: { userId, productId, quantity } }
+                {
+                    // headers: { Authorization: `Bearer ${token}` },
+                    params: { userId, productId, quantity }
+                }
             );
 
             setCart(prev => {
@@ -90,8 +96,6 @@ const CartProvider = ({ children }) => {
                 }
             });
 
-
-            console.log("Product Add successfully ")
             await GetCartItems();
         } catch (err) {
             setError(err.response?.data || "Failed to add item");
@@ -103,8 +107,8 @@ const CartProvider = ({ children }) => {
     const removeFromCart = async (productId) => {
         try {
             setLoading(true);
-            await axios.delete(
-                `http://clicktobuy.runasp.net/api/ShoppingCarts/RemoveFromCart/${user?.id}`,
+            await api.delete(
+                `/ShoppingCarts/RemoveFromCart/${user?.id}`,
                 { params: { productId } }
             );
 
@@ -136,10 +140,10 @@ const CartProvider = ({ children }) => {
     const changeQuantity = async (userId, productId, newQuantity) => {
         setLoading(true)
         try {
-            const res = await axios.patch(`http://clicktobuy.runasp.net/api/ShoppingCarts/ChangeCartQuantity/${user?.id}`
+            const res = await api.patch(`/ShoppingCarts/ChangeCartQuantity/${user?.id}`
                 , {}, { params: { ProductId: productId, quantity: newQuantity } }
             )
-            console.log("Product Quantity Edit successfully ")
+            toast.success("Product Quantity Edit successfully ")
             await GetCartItems();
             return true;
         } catch (err) {
@@ -148,38 +152,6 @@ const CartProvider = ({ children }) => {
             setLoading(false)
         }
     }
-
-    // Change quantity
-    // const changeQuantity = async (id, newQuantity) => {
-    //     try {
-    //         setLoading(true);
-    //         await axios.put(`${BASE_URL}/UpdateQuantity/${id}`, null, {
-    //             params: { quantity: newQuantity },
-    //         });
-    //         await GetCartItems();
-    //     } catch (err) {
-    //         setError(err.response?.data || "Failed to update quantity");
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
-    // Place Order
-    // const placeOrder = async (userId) => {
-    //     try {
-    //         setLoading(true);
-    //         const res = await axios.post(`${BASE_URL}/PlaceOrder`, null, {
-    //             params: { userId },
-    //         });
-    //         setCart([]); // بعد الطلب بنفضي الكارت
-    //         return res.data; // ممكن يرجع OrderId أو رسالة نجاح
-    //     } catch (err) {
-    //         setError(err.response?.data || "Failed to place order");
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
 
     const getTotalQuantity = () =>
         cart.items?.reduce((sum, item) => sum + item.quantity, 0);

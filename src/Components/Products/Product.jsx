@@ -9,10 +9,14 @@ import { IoMdClose } from "react-icons/io";
 import img1 from "../../assets/Cat_Image/download.jpg"
 import ButtonAddToCart from '../Common/ButtonAddToCart';
 import { useUser } from '../../Context/UserProvider';
-import { connect } from 'react-redux';
 
 
 import "./style.css"
+import { useWishlist } from '../../Context/Wishlist/WishlistProvider';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+
+
+
 
 const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDelete }) => {
 
@@ -20,8 +24,8 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
 
     const [menuOpen, setMenuOpen] = useState(false);
 
-
     const [isDebouncing, setIsDebouncing] = useState(false);
+    const [wishlistLoading, setWishlistLoading] = useState(false);
 
     const existingItem = cart.items.find(item => item.productId === id);
     const QuantityinCart = existingItem ? existingItem.quantity : 0;
@@ -30,7 +34,6 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
 
     const isOutOfStock = QuantityinCart >= max;
 
-    const isDisabled = isOutOfStock || isDebouncing;
 
 
     const { user } = useUser();
@@ -38,15 +41,35 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
     const isAdmin = userRoles.includes("Admin");
 
 
+
+
+
+    const { wishlistitems, AddToWishlist, RemoveFromWishlist } = useWishlist();
+
+    const isInWishlist = wishlistitems.some((item) => item.productId === id);
+
+    const handleWishlistToggle = async () => {
+        if (isDebouncing || wishlistLoading) return;
+        setIsDebouncing(true);
+        setWishlistLoading(true);
+        try {
+            if (isInWishlist) {
+                await RemoveFromWishlist(id);
+            } else {
+                await AddToWishlist(id);
+            }
+        } finally {
+            setWishlistLoading(false);
+        }
+    };
+
+
+
     // Depounce Time
     useEffect(() => {
-        if (!isDebouncing) {
-            return;
-        }
+        if (!isDebouncing) { return; }
 
-        const debounce = setTimeout(() => {
-            setIsDebouncing(false);
-        }, 300);
+        const debounce = setTimeout(() => { setIsDebouncing(false); }, 300);
 
         return () => clearTimeout(debounce);
     }, [isDebouncing]);
@@ -58,12 +81,42 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
     }
 
 
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setScreenWidth(window.innerWidth);
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
+
     return (
-        <div className='d-flex justify-content-center align-items-center w-100 mb-2 position-relative overflow-hidden  pro'>
+        <div className='d-flex justify-content-center align-items-center w-100 mb-2 position-relative overflow-hidden p-2 shadow bg-light pro'>
+
+            {!isAdmin && (
+                <div
+                    className="position-absolute bg-light p-1 shadow rounded-3 heart"
+                    onClick={handleWishlistToggle}
+                >
+                    {wishlistLoading ? (
+                        <Spinner animation="border" size="sm" className='text-info' />
+                    ) : isInWishlist ? (
+                        <FaHeart size={22} color="rgba(204, 33, 33, 1)" />
+                    ) : (
+                        <FaRegHeart size={22} color="gray" />
+                    )}
+                </div>
+            )}
 
             {isAdmin && (
                 <div
-                    className='dots  '
+                    className='dots'
                     // style={{ right: "0px", top: "5px", zIndex: "10px", cursor: "pointer" }}
                     onClick={() => setMenuOpen(!menuOpen)}
                 >
@@ -84,33 +137,33 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
 
             {/* Admin role */}
 
-            {isAdmin && 
-            menuOpen && (
-                <div
-                    className="position-absolute bg-white shadow rounded p-1 w-50 "
-                    style={{ right: "30px", top: "5px", zIndex: 999 }}
-                >
-                    <button
-                        className=" btn btn-outline-info fw-bold w-100 text-start "
-                        onClick={() => {
-                            onEdit();
-                            setMenuOpen(false);
-                        }}
+            {isAdmin &&
+                menuOpen && (
+                    <div
+                        className="position-absolute bg-white shadow rounded p-1 w-50 "
+                        style={{ right: "30px", top: "5px", zIndex: 999 }}
                     >
-                        Edit
-                    </button>
+                        <button
+                            className=" btn btn-outline-info fw-bold w-100 text-start "
+                            onClick={() => {
+                                onEdit();
+                                setMenuOpen(false);
+                            }}
+                        >
+                            Edit
+                        </button>
 
-                    <button
-                        className=" btn btn-outline-danger fw-bold w-100 text-start mt-2 border-top pt-2"
-                        onClick={handleDelete}
-                    >
-                        Delete
-                    </button>
-                </div>
-            )}
+                        <button
+                            className=" btn btn-outline-danger fw-bold w-100 text-start mt-2 border-top pt-2"
+                            onClick={handleDelete}
+                        >
+                            Delete
+                        </button>
+                    </div>
+                )}
 
-            <div className='d-flex flex-column justify-content-center align-items-start px-3 py-2  rounded rounded-3 w-100'>
-                <Link to={`/categories/products/${prefix}/${id}`} className="text-decoration-none text-dark w-100 text-center product">
+            <div className='d-flex flex-column justify-content-between gap-2 align-items-start px-lg-3 py-2  rounded rounded-3 w-100 '>
+                <Link to={`/categories/products/${prefix}/${id}`} className="text-decoration-none text-dark w-100 text-center product ">
                     {img ?
                         (
                             <img
@@ -130,8 +183,8 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
                     }
                     <div className='px-4 my-1 div'>
                         <h5 className=" mt-2 h5" title={title}>{title.length > 15 ? title.slice(0, 15) + "..." : title}</h5>
-                        <h6 className='mb-2 h6'> {price.toFixed(2)} EGP</h6>
-                        {AvailableStock > 0 ? (<p><strong>Available:</strong> {AvailableStock} </p>) : <p className='badge text-bg-danger p-2  '> Sold Out </p>}
+                        <h6 className='mb-2 h6'> {screenWidth < 400 ? price : price.toFixed(2)} EGP</h6>
+                        {AvailableStock > 0 ? (<p><strong>Max:</strong> {AvailableStock} </p>) : <p className='badge text-bg-danger p-2  '> Sold Out </p>}
                     </div>
                 </Link>
 
@@ -142,6 +195,10 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
                         price={price}
                         max={max}
                         img={img}
+                        wishlistLoading={wishlistLoading}
+                        handleWishlistToggle={handleWishlistToggle}
+                        isInWishlist={isInWishlist}
+                        isAdmin={isAdmin}
                     />
                 </div>
 

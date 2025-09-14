@@ -1,6 +1,6 @@
 import React from 'react'
 import UseOrders from '../../Hooks/Orders/UseOrders';
-import { Modal, Spinner } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 
 const OrderDetailsModel = ({ showModal, setShowModal, orderDetails, selectedOrderId }) => {
 

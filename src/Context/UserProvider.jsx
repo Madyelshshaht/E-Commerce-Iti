@@ -2,6 +2,8 @@ import axios from 'axios';
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { UseCart } from './CartProvider';
+import api from '../services/axios-global';
+import { toast } from 'react-toastify';
 
 const UserContext = createContext();
 
@@ -12,6 +14,7 @@ const UserProvider = ({ children }) => {
 
 
     const [user, setUser] = useState(null)
+    console.log("user", user);
     const [userRole, setUserRole] = useState("")
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -19,17 +22,19 @@ const UserProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem("token"));
 
 
-    const RegisterFunc = async ({email, password, firstName, lastName}) => {
+
+    const RegisterFunc = async ({ email, password, firstName, lastName, phoneNumber }) => {
         setLoading(true);
         setError(null);
 
         try {
-            const res = await axios.post(`http://clicktobuy.runasp.net/api/Auth/Register`,
+            const res = await api.post(`/Auth/Register`,
                 {
                     email,
                     password,
                     firstName,
-                    lastName
+                    lastName,
+                    phoneNumber,
                 },
                 { headers: { "Content-Type": "application/json" } }
             )
@@ -46,14 +51,26 @@ const UserProvider = ({ children }) => {
 
         }
         catch (err) {
-            if (err.response && err.response.data) {
-                setError(
-                    typeof err.response.data === "string"
-                        ? err.response.data
-                        : err.response.data.message || "Registration failed"
+            console.error("REGISTER ERROR:", err.response?.data);
+
+            if (err.response?.data?.errors) {
+
+                const allErrors = Object.values(err.response.data.errors).flat();
+                allErrors.forEach((msg) =>
+                    toast.error(msg, {
+                        draggable: true,
+                        draggablePercent: 50,
+                        draggableDirection: "x",
+                    })
                 );
+                setError(allErrors.join(", "));
+            } else if (err.response?.data?.message) {
+
+                toast.error(err.response.data.message);
+                setError(err.response.data.message);
             } else {
-                setError("Something went wrong, please try again");
+                toast.error("Registration failed. Please check your input.");
+                setError("Registration failed");
             }
             throw err;
         } finally {
@@ -78,8 +95,8 @@ const UserProvider = ({ children }) => {
         setError(null);
 
         try {
-            const res = await axios.post(
-                'http://clicktobuy.runasp.net/api/Auth/Login',
+            const res = await api.post(
+                '/Auth/Login',
                 { email, password },
                 { headers: { "Content-Type": "application/json" } }
             );
@@ -116,25 +133,29 @@ const UserProvider = ({ children }) => {
         localStorage.removeItem("user");
         setToken(null);
         setUser(null);
-
     };
 
 
     const RefreshToken = async () => {
         try {
-            const refreshToken = localStorage.getItem("refreshToken");
             const token = localStorage.getItem('token')
+            const refreshToken = localStorage.getItem("refreshToken");
             if (!refreshToken) return null;
 
             const res = await axios.post(
-                "http://clicktobuy.runasp.net/api/Auth/refreshToken",
+                "http://clicktobuy.runasp.net/api/Auth/RefreshToken",
                 { token, refreshToken },
-                { headers: { "Content-Type": "application/json" } }
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                }
             );
 
-            // خزّن القيم الجديدة
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("refreshToken", res.data.refreshToken);
+
+            axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
 
             setToken(res.data.token);
             setUser(prev => ({ ...prev, token: res.data.token }));
@@ -142,16 +163,47 @@ const UserProvider = ({ children }) => {
             return res.data.token;
         } catch (err) {
             console.error("Failed to refresh token", err);
-            Logout();
+
+            if (err.response?.status === 400 || err.response?.status === 401) {
+                toast.error("the Session has expired LogIn Again", {
+                    position: "top-right",
+                    autoClose: 4000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+
+                setTimeout(() => {
+                    Logout();
+                }, 4200);
+            }
+
             return null;
         }
     };
 
+
+    useEffect(() => {
+        if (!token) return;
+
+        const expiresIn = 1800;
+        const refreshBefore = (expiresIn - 60) * 1000;
+
+        const timer = setTimeout(() => {
+            RefreshToken();
+        }, refreshBefore);
+
+        return () => clearTimeout(timer);
+    }, [token]);
+
     useEffect(() => {
         const reqInterceptor = axios.interceptors.request.use(
             (config) => {
-                if (token) {
-                    config.headers.Authorization = `Bearer ${token}`;
+                const currentToken = localStorage.getItem("token");
+                if (currentToken) {
+                    config.headers.Authorization = `Bearer ${currentToken}`;
                 }
                 return config;
             },
@@ -163,13 +215,13 @@ const UserProvider = ({ children }) => {
             async (error) => {
                 const originalRequest = error.config;
 
-
                 if (
                     error.response?.status === 401 &&
                     !originalRequest._retry
                 ) {
                     originalRequest._retry = true;
                     const newToken = await RefreshToken();
+
                     if (newToken) {
                         originalRequest.headers.Authorization = `Bearer ${newToken}`;
                         return axios(originalRequest);
@@ -184,7 +236,7 @@ const UserProvider = ({ children }) => {
             axios.interceptors.request.eject(reqInterceptor);
             axios.interceptors.response.eject(resInterceptor);
         };
-    }, [token]);
+    }, []);
 
     return (
         <UserContext.Provider value={{ userRole, setUserRole, user, Login, Logout, token, loading, error, RegisterFunc }} >

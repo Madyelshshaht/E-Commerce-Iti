@@ -6,7 +6,9 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import "./style.css"
 
-const ButtonAddToCart = ({ productId, max}) => {
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+
+const ButtonAddToCart = ({ productId, max, wishlistLoading, isInWishlist, handleWishlistToggle, isAdmin }) => {
 
     const navigate = useNavigate();
 
@@ -31,7 +33,7 @@ const ButtonAddToCart = ({ productId, max}) => {
 
     const handleAddToCart = () => {
         if (isDisabled) return;
-                        
+
         // const userId = "64a1d147-c790-407a-bdc6-e60020d045a6";
         if (token) {
             addToCart(user.id, productId, 1);
@@ -46,7 +48,7 @@ const ButtonAddToCart = ({ productId, max}) => {
                 cancelButtonText: "Cancel",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    navigate("/login"); 
+                    navigate("/login");
                 }
             });
         }
@@ -54,18 +56,36 @@ const ButtonAddToCart = ({ productId, max}) => {
     };
 
     return (
-        <button
-            className={`btn w-100 text-white px-md-4 ${isDisabled ? 'btn-secondary cursor-not-allowed opacity-75' : 'btn-info'} `}
-            onClick={handleAddToCart}
-            disabled={isDisabled}
-        >
-            {isOutOfStock
-                ? "Out of Stock"
-                : isDebouncing
-                    ? <><Spinner animation="border" size="sm" /> Loading...</>
-                    : "Add to Cart"
-            }
-        </button>
+        <div className="d-flex justify-content-between align-items-center gap-2 ">
+            <button
+                className={`btn w-100 text-white px-md-3 ${isDisabled ? 'btn-secondary cursor-not-allowed opacity-75' : 'btn-info'} `}
+                onClick={handleAddToCart}
+                disabled={isDisabled}
+            >
+                {isOutOfStock
+                    ? "Out of Stock"
+                    : isDebouncing
+                        ? <><Spinner animation="border" size="sm" /> Loading...</>
+                        : "Add to Cart"
+                }
+            </button>
+            {isAdmin && (
+                <div
+                    className=" bg-light p-1 shadow rounded-1 btn-heart "
+                    onClick={handleWishlistToggle}
+                >
+                    {wishlistLoading ? (
+                        <Spinner animation="border" size="sm" className='text-info' />
+                    ) : isInWishlist ? (
+                        <FaHeart size={22} color="rgba(204, 33, 33, 1)" />
+                    ) : (
+                        <FaRegHeart size={22} color="gray" />
+                    )}
+                </div>
+            )}
+
+
+        </div>
     );
 };
 
