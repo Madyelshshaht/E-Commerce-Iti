@@ -2,85 +2,187 @@ import React from "react";
 import category1 from "../../assets/Cat_Image/download.jpg";
 import category2 from "../../assets/Cat_Image/girl.jpg";
 import category3 from "../../assets/Cat_Image/watch.jpg";
-
-
-
-
-
+import aboutUsImage from "../../assets/LotiFiles/pic.webp"
 import { Link } from "react-router-dom";
-import "./style.css"
+import "./style.css";
 
 const HomeCatSection = () => {
-    return (
-        <>
-            <section className="categories-section container py-5 mt-5">
-                <h2 className="text-center fw-bold mb-5 ">Shop by Categories</h2>
-                <div className="row g-4 text-center  ">
+  return (
+    <>
+      {/* Categories Section */}
+      <section className="categories-section container py-5 mt-5">
+        <h2 className="text-center fw-bold mb-5 ">Shop by Categories</h2>
+        <div className="row g-4 text-center">
+          {/* Category 1 */}
+          <div className="col-lg-4 col-md-6 ">
+            <div className="category-card position-relative overflow-hidden rounded shadow ">
+              <img src={category1} alt={`Category`} className="img-fluid " />
+              <div className="category-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column gap-4 justify-content-center align-items-center">
+                <h1 className="text-white">Explore Mens Products</h1>
+                <Link
+                  to={`/categories/products/men`}
+                  className="btn btn-light  rounded rounded-2 py-2 px-4"
+                >
+                  Explore
+                </Link>
+              </div>
+            </div>
+          </div>
 
-                    <div className="col-lg-4 col-md-6 ">
+          {/* Category 2 */}
+          <div className="col-lg-4 col-md-6 ">
+            <div className="category-card position-relative overflow-hidden rounded shadow">
+              <img
+                src={category2}
+                alt={`Category`}
+                className="img-fluid "
+                style={{ objectFit: "cover" }}
+              />
+              <div className="category-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column gap-4 justify-content-center align-items-center">
+                <h1 className="text-white">Explore Womens Products</h1>
+                <Link
+                  to={`/categories/products/women`}
+                  className="btn btn-light  rounded rounded-2 py-2 px-4"
+                >
+                  Explore
+                </Link>
+              </div>
+            </div>
+          </div>
 
-                        <div className="category-card position-relative overflow-hidden rounded shadow ">
-                            <img
-                                src={category1}
-                                alt={`Category`}
-                                className="img-fluid "
-                            />
-                            <div className="category-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column gap-4 justify-content-center align-items-center">
-                                <h1 className="text-white">Explore Mens Products</h1>
-                                <Link
-                                    to={`/categories/products/men`}
-                                    className="btn btn-light  rounded rounded-2 py-2 px-4"
-                                >
-                                    Explore
-                                </Link>
-                            </div>
-                        </div>
+          {/* Category 3 */}
+          <div className="col-lg-4 col-md-6 ">
+            <div className="category-card position-relative overflow-hidden rounded shadow">
+              <img
+                src={category3}
+                alt={`Category`}
+                className="img-fluid  "
+                style={{ objectFit: "cover" }}
+              />
+              <div className="category-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column gap-4 justify-content-center align-items-center">
+                <h1 className="text-white">Explore Accessories Products</h1>
+                <Link
+                  to={`/categories/products/watches`}
+                  className="btn btn-light  rounded rounded-2 py-2 px-4"
+                >
+                  Explore
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+         {/* About Us Section */}
+     <section className="about-us container py-5">
+  <div className="row align-items-center">
+    {/* Left Content (Text) */}
+    <div className="col-lg-6 order-2 order-lg-1 mt-4 mt-lg-0 mt-4">
+      <h2 className="fw-bold mb-4 text-start">About Us</h2>
+      <p className="text-muted fs-5 lh-lg mb-4 text-start">
+        We are an e-commerce platform dedicated to bringing you the best products 
+        with premium quality and affordable prices.  
+        Our mission is to provide a seamless, fast, and enjoyable shopping experience 
+        for our customers.  
+        From men's and women's fashion to accessories, we’ve got everything you need.
+      </p>
 
-                    </div>
+      <div className="text-start">
+        <button className="btn btn-primary mb-4">Read More</button>
+      </div>
 
-                    <div className="col-lg-4 col-md-6 ">
-                        <div className="category-card position-relative overflow-hidden rounded shadow">
-                            <img
-                                src={category2}
-                                alt={`Category`}
-                                className="img-fluid "
-                                style={{ objectFit: "cover" }}
-                            />
-                            <div className="category-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column gap-4 justify-content-center align-items-center">
-                                <h1 className="text-white">Explore Womens Products</h1>
-                                <Link
-                                    to={`/categories/products/women`}
-                                    className="btn btn-light  rounded rounded-2 py-2 px-4"
-                                >
-                                    Explore
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
+      {/* Social Icons */}
+      <div className="d-flex gap-3 text-start">
+        <a href="https://facebook.com" target="_blank" rel="noreferrer" className="text-dark fs-4">
+          <i className="bi bi-facebook"></i>
+        </a>
+        <a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-dark fs-4">
+          <i className="bi bi-instagram"></i>
+        </a>
+        <a href="https://twitter.com" target="_blank" rel="noreferrer" className="text-dark fs-4">
+          <i className="bi bi-twitter"></i>
+        </a>
+      </div>
+    </div>
 
-                    <div className="col-lg-4 col-md-6 ">
-                        <div className="category-card position-relative overflow-hidden rounded shadow">
-                            <img
-                                src={category3}
-                                alt={`Category`}
-                                className="img-fluid  "
-                                style={{ objectFit: "cover" }}
-                            />
-                            <div className="category-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column gap-4 justify-content-center align-items-center">
-                                <h1 className="text-white">Explore Accessories Products</h1>
-                                <Link
-                                    to={`/categories/products/watches`}
-                                    className="btn btn-light  rounded rounded-2 py-2 px-4"
-                                >
-                                    Explore
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </>
-    );
+    {/* Right Image */}
+    <div className="col-lg-6 order-1 order-lg-2 mb-4 mb-lg-0">
+      <img
+       src={aboutUsImage}
+        alt="About Us"
+        className="img-fluid rounded shadow"
+        
+      />
+    </div>
+  </div>
+</section>
+
+    {/*Contact Us*/}
+  <section className="contact-section py-5">
+      <div className="container">
+        {/* Title */}
+        <div className="text-center mb-5">
+          <h2 className="fw-bold contact-title">CONTACT US</h2>
+          <p className="contact-subtitle">
+            We’d love to hear from you. Whether you have a question about our products, need assistance, or just want to share feedback, we’re here to help.
+          </p>
+        </div>
+
+        <div className="row">
+          {/* Left Side: Form */}
+          <div className="col-lg-8 mb-4">
+            <form className="contact-form">
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="YOUR NAME"
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="email"
+                  className="form-control"
+                  placeholder="YOUR MAIL"
+                />
+              </div>
+              <div className="mb-3">
+                <textarea
+                  className="form-control"
+                  rows="5"
+                  placeholder="YOUR MESSAGE"
+                ></textarea>
+              </div>
+              <button type="submit" className="btn btn-primary w-100 py-2">
+                SEND MESSAGE
+              </button>
+            </form>
+          </div>
+
+          {/* Right Side: Info */}
+          <div className="col-lg-4">
+            <div className="contact-info mb-4">
+              <h5 className="fw-bold">GET IN TOUCH</h5>
+              <p>+00 01062605422</p>
+              <p>+00 123456789</p>
+            </div>
+            <div className="contact-info">
+              <h5 className="fw-bold">WHERE WE ARE</h5>
+              <p>Awesome Address 17</p>
+              <p>Mansoura, Kanat Elwsis</p>
+              <p>123-4567-890</p>
+              <p>EGY</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+      
+
+      </section>
+
+     
+    </>
+  );
 };
 
 export default HomeCatSection;
