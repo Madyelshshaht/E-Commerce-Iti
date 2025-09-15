@@ -1,24 +1,22 @@
-import axios from 'axios';
+
 import React, { useEffect, useState } from 'react'
-import { Spinner } from 'react-bootstrap';
-import { useUser } from '../Context/UserProvider';
 import api from '../services/axios-global';
+import LoadingSpinner from '../Components/Common/LoadingSpinner';
 
 const Users = () => {
 
-    const { token } = useUser();
-
     const [users, setUsers] = useState([]);
+
     const [loading, setLoading] = useState(false);
+
     const [error, setError] = useState("");
 
 
     const GetUsers = async () => {
         setLoading(true);
         try {
-            const res = await api.get(`/Users`)
+            const res = await api.get(`/Users`);
             setUsers(res.data);
-            console.log(res.data);
         } catch (err) {
             setError(err.message);
         }
@@ -31,18 +29,10 @@ const Users = () => {
         GetUsers();
     }, [])
 
-    if (loading) {
-        return (
-            <div className='d-flex justify-content-center align-items-center mt-5 pt-5'>
-                <Spinner animation="border" className='mt-5 text-info' role="status">
-                    <span className="visually-hidden">Loading Users...</span>
-                </Spinner>
-            </div>
-        )
-    }
+    if (loading) { return <LoadingSpinner message="Loading Users..." size={"lg"} />; }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return <ErrorsMessage message={error} />
     }
 
     return (
@@ -72,7 +62,7 @@ const Users = () => {
                                         <td>{user.firstName}</td>
                                         <td>{user.lastName}</td>
                                         <td>{user.email}</td>
-                                        <td>{user.phoneNumber || "*****"}</td>
+                                        <td>{user.phoneNumber || "---- ---- ----"}</td>
                                     </tr>
                                 ))}
                             </tbody>

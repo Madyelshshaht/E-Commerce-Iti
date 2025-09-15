@@ -11,13 +11,11 @@ const Login = () => {
   const { Login, loading, error } = useUser();
 
   const [email, setEmail] = useState("");
-
   const [password, setPassword] = useState("");
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const errors = [];
 
     const sanitizeInput = (value) => value.replace(/[<>]/g, "");
@@ -49,7 +47,6 @@ const Login = () => {
       toast.error("Login failed. Please check your credentials.", err);
     }
   };
-
 
 
 

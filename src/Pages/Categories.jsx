@@ -13,6 +13,8 @@ import SearchCategory from "../Components/Categories/SearchCategory";
 import Lottie from "lottie-react";
 import NoData from "../assets/LotiFiles/No_Data.json";
 import { useUser } from "../Context/UserProvider";
+import ErrorsMessage from "../Components/Common/ErrorsMessage";
+import Heading from "../Components/Common/Heading";
 
 
 const Categories = () => {
@@ -32,7 +34,9 @@ const Categories = () => {
     const [searchData, setSearchData] = useState(null);
 
 
-
+    const { user } = useUser();
+    const userRoles = user?.userRoles || [];
+    const isAdmin = userRoles.includes("Admin");
 
 
     const handleAdd = () => {
@@ -47,7 +51,7 @@ const Categories = () => {
 
         window.scrollTo({
             top: 0,
-            behavior: "smooth", 
+            behavior: "smooth",
         });
     };
 
@@ -59,9 +63,9 @@ const Categories = () => {
     }
 
     if (error) return <>
-        {userRole === "admin" && (
+        {isAdmin && (
             <div className="d-flex justify-content-between align-items-center mb-2">
-                <h1 className="mb-5">Categories</h1>
+                <Heading title="Categories" />
 
                 {/* [Admin] Buuton Add New */}
                 <button className="btn btn-success mb-4" onClick={handleAdd}>
@@ -70,18 +74,17 @@ const Categories = () => {
             </div>
         )}
 
-        <p>Error: {error}</p>;
+        <ErrorsMessage message={error} />
     </>
 
 
-    const { user } = useUser();
-    const userRoles = user?.userRoles || [];
-    const isAdmin = userRoles.includes("Admin");
+
 
     return (
         <>
             <div className="d-flex justify-content-between align-items-center mb-5 overflow-hidden ">
-                <h1>Categories</h1>
+                <Heading title="Categories" />
+                {/* <h1>Categories</h1> */}
 
                 {isAdmin && (
                     <button className="btn btn-success " onClick={handleAdd}>

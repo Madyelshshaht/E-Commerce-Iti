@@ -5,6 +5,8 @@ import { Modal, Spinner } from "react-bootstrap";
 import NoData from "../assets/LotiFiles/No_Data.json";
 import Lottie from "lottie-react";
 import OrderDetailsModel from "../Components/Orders/OrderDetailsModel";
+import LoadingSpinner from "../Components/Common/LoadingSpinner";
+import Heading from "../Components/Common/Heading";
 
 const Orders = () => {
 
@@ -59,14 +61,7 @@ const Orders = () => {
         });
     };
 
-    if (loading)
-        return (
-            <div className="d-flex justify-content-center align-items-center mt-5">
-                <Spinner animation="border" size="lg" variant="info" className="mt-5">
-                    <span className="visually-hidden">Loading Orders...</span>
-                </Spinner>
-            </div>
-        );
+    if (loading) { return <LoadingSpinner message="Loading Orders..." size={"lg"} />; }
 
     const TotalPrice = orders.reduce(
         (acc, item) => acc + Number(item.totalAmoutForeachOrder || 0),
@@ -75,7 +70,8 @@ const Orders = () => {
 
     return (
         <>
-            <h1>Orders Page</h1>
+            <Heading title={`Orders Page`} />
+
             <div>
                 <h2 className="mt-5">My Orders</h2>
                 {orders.length === 0 ? (
@@ -108,6 +104,7 @@ const Orders = () => {
                                 </div>
                             </div>
                         ))}
+
                         <OrderDetailsModel
                             showModal={showModal}
                             setShowModal={setShowModal}

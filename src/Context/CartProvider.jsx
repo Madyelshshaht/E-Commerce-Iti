@@ -18,6 +18,8 @@ const CartProvider = ({ children }) => {
         items: []
     });
 
+    console.log("cart from context", cart.items);
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const { user, token } = useUser();
@@ -60,6 +62,7 @@ const CartProvider = ({ children }) => {
         }
     }, [token, user?.id]);
 
+    //  Add Item to cart
     const addToCart = async (userId, productId, quantity = 1) => {
         setLoading(true);
         try {
@@ -104,6 +107,7 @@ const CartProvider = ({ children }) => {
         }
     };
 
+    // Remove Item from Cart
     const removeFromCart = async (productId) => {
         try {
             setLoading(true);
@@ -111,11 +115,6 @@ const CartProvider = ({ children }) => {
                 `/ShoppingCarts/RemoveFromCart/${user?.id}`,
                 { params: { productId } }
             );
-
-            // setCart(prev => ({
-            //     ...prev,
-            //     items: prev.items.filter(item => item.productId !== productId)
-            // }));
 
             await GetCartItems();
         }
@@ -126,6 +125,7 @@ const CartProvider = ({ children }) => {
         }
     };
 
+    // Clear Cart and userID and CartID when LogOut
     const clearCart_LogOut = () => setCart({
         cartId: null,
         userId: null,
@@ -136,7 +136,7 @@ const CartProvider = ({ children }) => {
     // Clear Cart data not default UserId or CartId
     const clearCart = () => setCart(prev => ({ ...prev, items: [], totalAmount: 0 }));
 
-
+    //  Change Quantity
     const changeQuantity = async (userId, productId, newQuantity) => {
         setLoading(true)
         try {
@@ -153,9 +153,11 @@ const CartProvider = ({ children }) => {
         }
     }
 
+    // Totla Quantity
     const getTotalQuantity = () =>
         cart.items?.reduce((sum, item) => sum + item.quantity, 0);
 
+    // Total Price
     const getTotalPrice = () =>
         cart.items?.reduce((sum, item) => sum + item.price * item.quantity, 0);
 

@@ -1,0 +1,21 @@
+.d-input{
+    margin-bottom: 30px;
+}
+
+.d-input input{
+    height: 50px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    padding-left: 15px;
+}
+
+
+.btn-register button{
+    width: 100%;
+}
+
+.btn-register button:hover{
+    transform: scale(1.01);
+    transition: all 0.5s ease-out;
+    letter-spacing: 2px;
+}

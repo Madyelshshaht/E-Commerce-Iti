@@ -13,7 +13,6 @@ import { MdOutlineWorkspacePremium } from "react-icons/md";
 import { RiCustomerService2Fill } from "react-icons/ri";
 
 
-
 const Home = () => {
     return (
         <div className='home-page container-fluid p-0 '>
@@ -26,7 +25,6 @@ const Home = () => {
                         <Lottie animationData={shopping} loop={true} autoplay={true} />
                     </div>
                 </div>
-
 
                 <div className="col-md-6 text-center d-flex justify-content-center align-items-center flex-column text-black mt-md-0 mt-3" >
                     <h1 className="title fw-bold mb-3">Discover Stylish Clothing!</h1>
@@ -42,11 +40,8 @@ const Home = () => {
 
             </section>
 
-            {/* Categories Section */}
             <HomeCatSection />
 
-            {/* Features Section */}
-           
         </div>
     );
 };

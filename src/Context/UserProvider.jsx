@@ -14,14 +14,12 @@ const UserProvider = ({ children }) => {
 
 
     const [user, setUser] = useState(null)
-    console.log("user", user);
+    // console.log("user", user);
     const [userRole, setUserRole] = useState("")
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const [token, setToken] = useState(localStorage.getItem("token"));
-
-
 
     const RegisterFunc = async ({ email, password, firstName, lastName, phoneNumber }) => {
         setLoading(true);
@@ -77,7 +75,6 @@ const UserProvider = ({ children }) => {
             setLoading(false);
         }
     }
-
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
