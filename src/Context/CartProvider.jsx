@@ -108,12 +108,12 @@ const CartProvider = ({ children }) => {
     };
 
     // Remove Item from Cart
-    const removeFromCart = async (productId) => {
+    const removeFromCart = async (productId , quantity) => {
         try {
             setLoading(true);
             await api.delete(
                 `/ShoppingCarts/RemoveFromCart/${user?.id}`,
-                { params: { productId } }
+                { params: { productId , quantity } }
             );
 
             await GetCartItems();

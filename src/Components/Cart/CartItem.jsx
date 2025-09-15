@@ -24,7 +24,7 @@ const CartItem = ({ id, title, price, quantity, max, img }) => {
                                 <span>{price ? price.toFixed(2) : 0} EGP</span>
                             </div>
                             <button
-                                onClick={() => removeFromCart(id)}
+                                onClick={() => removeFromCart(id, quantity)}
                                 className="btn btn-sm btn-danger mt-4"
                             >
                                 Remove
