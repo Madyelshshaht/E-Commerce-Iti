@@ -66,13 +66,12 @@ const Products = () => {
                         className="btn btn-success mb-4"
                         onClick={() => setToggle(!toggle)}
                     >
-                        {!toggle ? " Add Product " : "Close"}
+                        {!toggle ? " Add Product " : "close"}
                     </button>
                 )}
 
             </div>
             <ErrorsMessage message={error} title={"No Product Found"} />
-            {/* <h3 className="text-danger text-center mt-5"> No Product Found <br /> {error} </h3> */}
         </>
     }
 
@@ -83,7 +82,7 @@ const Products = () => {
         <>
             <div className="d-flex justify-content-between align-items-center mb-2 overflow-hidden">
                 <Heading title={`Products ${prefix}`} />
-                
+
                 {/* to can Add Product */}
                 {isAdmin && (
                     <button
