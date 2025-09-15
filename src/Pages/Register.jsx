@@ -1,10 +1,4 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useUser } from "../Context/UserProvider";
-import { ToastContainer, toast } from "react-toastify";
-import { Spinner } from "react-bootstrap";
-
-
+import { ToastContainer } from "react-toastify";
 
 import RegisterForm from "../Components/Register/RegisterForm";
 

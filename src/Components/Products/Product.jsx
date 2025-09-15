@@ -34,22 +34,17 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
 
     const AvailableStock = max - QuantityinCart;
 
-    const isOutOfStock = QuantityinCart >= max;
-
-
+    // const isOutOfStock = QuantityinCart >= max;
 
     const { user } = useUser();
     const userRoles = user?.userRoles || [];
     const isAdmin = userRoles.includes("Admin");
 
-
-
-
-
     const { wishlistitems, AddToWishlist, RemoveFromWishlist } = useWishlist();
 
     const isInWishlist = wishlistitems.some((item) => item.productId === id);
 
+    // add & Remove From WishList
     const handleWishlistToggle = async () => {
         if (isDebouncing || wishlistLoading) return;
         setIsDebouncing(true);
@@ -65,8 +60,6 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
         }
     };
 
-
-
     // Depounce Time
     useEffect(() => {
         if (!isDebouncing) { return; }
@@ -76,7 +69,7 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
         return () => clearTimeout(debounce);
     }, [isDebouncing]);
 
-
+    // delete Product
     const handleDelete = () => {
         onDelete(id)
         setMenuOpen(false)
@@ -84,7 +77,7 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
 
 
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-
+    // handel Resize to handel Responsive Design
     useEffect(() => {
         const handleResize = () => {
             setScreenWidth(window.innerWidth);
@@ -101,13 +94,16 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
     return (
         <div className='d-flex justify-content-center align-items-center w-100 mb-2 position-relative overflow-hidden p-2 shadow bg-light pro'>
 
+            {/* User */}
             {!isAdmin && token && (
                 <div
                     className="position-absolute bg-light p-1 shadow rounded-3 heart"
                     onClick={handleWishlistToggle}
                 >
                     {wishlistLoading ? (
-                        <Spinner animation="border" size="sm" className='text-info' />
+                        <Spinner animation="border" size="sm" variant="info">
+                            <span className="visually-hidden">Loading...</span>
+                        </Spinner>
                     ) : isInWishlist ? (
                         <FaHeart size={22} color="rgba(204, 33, 33, 1)" />
                     ) : (
@@ -116,6 +112,7 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
                 </div>
             )}
 
+            {/* AdminRole => Verticl dots : */}
             {isAdmin && (
                 <div
                     className='dots'
@@ -136,9 +133,7 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
                 </div>
             )}
 
-
             {/* Admin role */}
-
             {isAdmin &&
                 menuOpen && (
                     <div
@@ -165,6 +160,7 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
                 )}
 
             <div className='d-flex flex-column justify-content-between gap-2 align-items-start px-lg-3 py-2  rounded rounded-3 w-100 '>
+                {/* to => ProductDetails */}
                 <Link to={`/categories/products/${prefix}/${id}`} className="text-decoration-none text-dark w-100 text-center product ">
                     {img ?
                         (
@@ -184,8 +180,10 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
                         )
                     }
                     <div className='px-4 my-1 div'>
+                        {/* to slice title if length is big to make design is comfortable */}
                         <h5 className=" mt-2 h5" title={title}>{title.length > 15 ? title.slice(0, 15) + "..." : title}</h5>
                         <h6 className='mb-2 h6'> {screenWidth < 400 ? price : price.toFixed(2)} EGP</h6>
+                        {/* to handel Count of Stock */}
                         {AvailableStock > 0 ? (<p><strong>Max:</strong> {AvailableStock} </p>) : <p className='badge text-bg-danger p-2  '> Sold Out </p>}
                     </div>
                 </Link>

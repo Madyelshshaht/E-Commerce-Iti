@@ -10,7 +10,6 @@ export const useProduct = () => useContext(ProductContext);
 
 const ProductProvider = ({ children }) => {
 
-    const { token } = useUser();
 
     const [product, setProduct] = useState([]);
     const [loading, setLoading] = useState(false);

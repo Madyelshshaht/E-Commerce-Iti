@@ -25,10 +25,11 @@ const RegisterForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
         const errors = [];
 
 
-        // ✅ Sanitize function ضد XSS
+        // Sanitize function  XSS
         const sanitizeInput = (value) => value.replace(/[<>]/g, "").trim();
 
         const safeFirstName = sanitizeInput(firstName);
@@ -37,7 +38,7 @@ const RegisterForm = () => {
         const safePassword = sanitizeInput(password);
         const safeConfirmPassword = sanitizeInput(confirmPassword);
 
-        const phoneRegex = /^[0-9]{10,15}$/;
+        const phoneRegex = /^[0-9]{10,}$/;
 
         if (!phoneRegex.test(phone)) {
             errors.push("Please enter a valid phone number.");
@@ -94,7 +95,7 @@ const RegisterForm = () => {
         });
 
         if (result) {
-            toast.success("🎉 Account created successfully!");
+            toast.success("Account created successfully!");
             navigate("/");
 
             // Reset form
@@ -215,7 +216,7 @@ const RegisterForm = () => {
                     </button>
                 </div>
 
-                {error && <p className="text-danger text-center mt-2">{error}</p>}
+                {/* {error && <p className="text-danger text-center mt-2">{error}</p>} */}
 
                 <p className="text-center mt-3 mb-0 text-secondary mt-4">
                     Already have an account?

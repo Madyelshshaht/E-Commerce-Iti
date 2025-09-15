@@ -12,6 +12,7 @@ import { useMemo, useRef, useState } from "react";
 
 import SearchProduct from "../Components/Products/SearchProduct"
 import { useUser } from "../Context/UserProvider";
+import Heading from "../Components/Common/Heading";
 
 const Products = () => {
     const { prefix } = useParams();
@@ -25,10 +26,9 @@ const Products = () => {
 
     const [searchData, setSearchData] = useState(null);
 
-    // const handleAdd = () => {
-    //     setInitialData(null);
-    //     setToggle(!toggle);
-    // };
+    const { user } = useUser();
+    const userRoles = user?.userRoles || [];
+    const isAdmin = userRoles.includes("Admin");
 
 
     const handleEdit = (pro) => {
@@ -37,15 +37,17 @@ const Products = () => {
 
         window.scrollTo({
             top: 0,
-            behavior: "smooth", 
+            behavior: "smooth",
         });
     };
 
+    // Filter Products by CategoryName and Prefix  ==> to edintify each product in the correct Category
     const filteredProducts = useMemo(() => {
-        return (product || []).filter((item) =>
+        return (product).filter((item) =>
             item?.categoryName?.toLowerCase() === prefix?.toLowerCase()
         );
     }, [product, prefix]);
+
 
     const displayedProducts = searchData !== null ? searchData : filteredProducts;
 
@@ -56,9 +58,10 @@ const Products = () => {
     if (error) {
         return <>
             <div className="d-flex justify-content-between align-items-center mb-2">
-                <h1>Products {prefix}</h1>
 
-                {userRole === "admin" && (
+                <Heading title={`Products ${prefix}`} />
+
+                {isAdmin && (
                     <button
                         className="btn btn-success mb-4"
                         onClick={() => setToggle(!toggle)}
@@ -68,19 +71,20 @@ const Products = () => {
                 )}
 
             </div>
-            <h3 className="text-danger text-center mt-5"> No Product Found <br /> {error} </h3>
+            <ErrorsMessage message={error} title={"No Product Found"} />
+            {/* <h3 className="text-danger text-center mt-5"> No Product Found <br /> {error} </h3> */}
         </>
     }
 
 
-    const { user } = useUser();
-    const userRoles = user?.userRoles || [];
-    const isAdmin = userRoles.includes("Admin");
+
 
     return (
         <>
             <div className="d-flex justify-content-between align-items-center mb-2 overflow-hidden">
-                <h1>Products {prefix}</h1>
+                <Heading title={`Products ${prefix}`} />
+                
+                {/* to can Add Product */}
                 {isAdmin && (
                     <button
                         className="btn btn-success "
@@ -90,7 +94,7 @@ const Products = () => {
                     </button>
                 )}
             </div>
-
+            {/* to Show form Category */}
             {isAdmin && (
                 <FormProduct
                     toggle={toggle}

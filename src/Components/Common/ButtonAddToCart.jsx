@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import "./style.css"
 
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import LoadingSpinner from "./LoadingSpinner";
 
 const ButtonAddToCart = ({ productId, max, wishlistLoading, isInWishlist, handleWishlistToggle, isAdmin }) => {
 
@@ -15,10 +16,12 @@ const ButtonAddToCart = ({ productId, max, wishlistLoading, isInWishlist, handle
     const { cart, addToCart } = UseCart();
     const [isDebouncing, setIsDebouncing] = useState(false);
 
+    // Check if found in Cart
     const existingItem = cart.items.find(item => item.productId === productId);
     const quantityInCart = existingItem ? existingItem.quantity : 0;
-    const availableStock = max - quantityInCart;
+    // const availableStock = max - quantityInCart;
     const isOutOfStock = quantityInCart >= max;
+    // Disa[led Button if the stock is sold
     const isDisabled = isOutOfStock || isDebouncing;
 
     const { user, token } = useUser();
@@ -31,14 +34,16 @@ const ButtonAddToCart = ({ productId, max, wishlistLoading, isInWishlist, handle
         return () => clearTimeout(debounce);
     }, [isDebouncing]);
 
+    // Add To Cart
     const handleAddToCart = () => {
         if (isDisabled) return;
 
-        // const userId = "64a1d147-c790-407a-bdc6-e60020d045a6";
         if (token) {
             addToCart(user.id, productId, 1);
             setIsDebouncing(true);
-        } else {
+        }
+        // you must Login to can Add product in cart
+        else {
             Swal.fire({
                 icon: "error",
                 title: "Login Required",
@@ -62,20 +67,29 @@ const ButtonAddToCart = ({ productId, max, wishlistLoading, isInWishlist, handle
                 onClick={handleAddToCart}
                 disabled={isDisabled}
             >
-                {isOutOfStock
-                    ? "Out of Stock"
-                    : isDebouncing
-                        ? <><Spinner animation="border" size="sm" /> Loading...</>
-                        : "Add to Cart"
+                {
+                    isOutOfStock
+                        ? "Out of Stock"
+                        : isDebouncing
+                            ? (
+                                <div>
+                                    <span className="fw-semibold">Loading...</span>
+                                    <Spinner animation="border" size="sm" variant="info" className="ms-2" />
+                                </div>
+                            )
+                            : "Add to Cart"
                 }
             </button>
+            {/* Admin change the Palce of heart in admin to Handel Responsive design to can make Edit and Delete and wish or No */}
             {isAdmin && (
                 <div
                     className=" bg-light p-1 shadow rounded-1 btn-heart "
                     onClick={handleWishlistToggle}
                 >
                     {wishlistLoading ? (
-                        <Spinner animation="border" size="sm" className='text-info' />
+                        <Spinner animation="border" size="sm" variant="info">
+                            <span className="visually-hidden">Loading...</span>
+                        </Spinner>
                     ) : isInWishlist ? (
                         <FaHeart size={22} color="rgba(204, 33, 33, 1)" />
                     ) : (

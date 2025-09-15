@@ -6,26 +6,18 @@ import { Col, Row, Spinner } from "react-bootstrap";
 import EmptyCard from "../assets/LotiFiles/Empty_Cart.json"
 import Lottie from "lottie-react";
 
+import ErrorsMessage from "../Components/Common/ErrorsMessage";
+import LoadingSpinner from "../Components/Common/LoadingSpinner";
+
 const Wishlists = () => {
     const { wishlistitems, loading, error, setWishlistCount } = useWishlist();
 
 
-
     const { prefix } = useParams();
 
-    if (loading) {
-        return (
-            <div className="d-flex justify-content-center align-items-center mt-5">
-                <Spinner animation="border" size="lg" variant="info">
-                    <span className="visually-hidden">Loading Wishlist...</span>
-                </Spinner>
-            </div>
-        );
-    }
+    if (loading) { return <LoadingSpinner message="Loading Wishlist..." size={"lg"} />; }
 
-    if (error) {
-        return <h3 className="text-danger">Error: {error}</h3>;
-    }
+    if (error) { return <ErrorsMessage message={error} />; }
 
     if (wishlistitems.length === 0) {
         return (
@@ -37,7 +29,6 @@ const Wishlists = () => {
             </>
         )
     }
-
 
 
     return (

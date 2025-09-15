@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useProduct } from "../../Context/ProductProvider";
 import ButtonAddToCart from "../Common/ButtonAddToCart";
 import { UseCart } from "../../Context/CartProvider";
+import Heading from "../Common/Heading";
 
 const ProductDetails = () => {
     const { prefix, id } = useParams();
 
     const { product } = useProduct();
 
+    // to identify product
     const specificProduct = product.find((p) => p.productId === parseInt(id));
+
 
     const { cart } = UseCart();
 
@@ -22,7 +25,7 @@ const ProductDetails = () => {
 
     return (
         <div>
-            <h2>Product Details</h2>
+            <Heading title={`Product Details`} />
 
             {specificProduct ? (
                 <div className="card mt-3 p-4 shadow-sm">
