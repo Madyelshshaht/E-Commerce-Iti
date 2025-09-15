@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { CgCloseO } from "react-icons/cg";
 import useCategories from "../../Hooks/useCategories/useCategories";
+import { useParams } from "react-router-dom";
 
-const FormProduct = ({ toggle, setToggle, initialData, setInitialData, AddProduct, UpdateProduct  }) => {
+const FormProduct = ({ toggle, setToggle, initialData, setInitialData, AddProduct, UpdateProduct }) => {
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -15,6 +16,8 @@ const FormProduct = ({ toggle, setToggle, initialData, setInitialData, AddProduc
 
 
     const { categories } = useCategories();
+    const { prefix } = useParams();
+
 
     useEffect(() => {
         if (initialData) {
@@ -26,6 +29,16 @@ const FormProduct = ({ toggle, setToggle, initialData, setInitialData, AddProduc
             setImage(null);
         }
     }, [initialData]);
+
+    // to make Form Category Default About Prefix
+    useEffect(() => {
+        if (!initialData && prefix && categories.length > 0) {
+            const matchCategory = categories.find((cat) => cat.title.toLowerCase() === prefix.toLowerCase());
+            if (matchCategory) {
+                setcategoryId(matchCategory.categoryId);
+            }
+        }
+    }, [prefix, categories, initialData, toggle])
 
 
     const handelSubmit = async (e) => {

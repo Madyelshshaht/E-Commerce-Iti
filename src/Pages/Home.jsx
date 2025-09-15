@@ -15,7 +15,6 @@ import { MdOutlineWorkspacePremium } from "react-icons/md";
 import { RiCustomerService2Fill } from "react-icons/ri";
 
 
-
 const Home = () => {
     return (
         <div className='home-page container-fluid p-0 '>
@@ -95,6 +94,7 @@ const Home = () => {
                     From casual wear to formal attire, each piece is crafted to perfection.
                 </p>
             </section>
+
         </div>
     );
 };

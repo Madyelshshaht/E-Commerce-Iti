@@ -16,9 +16,8 @@ const Users = () => {
     const GetUsers = async () => {
         setLoading(true);
         try {
-            const res = await api.get(`/Users`)
+            const res = await api.get(`/Users`);
             setUsers(res.data);
-            console.log(res.data);
         } catch (err) {
             setError(err.message);
         }

@@ -90,19 +90,21 @@ const router = createBrowserRouter([
                     </Suspense>
                 ),
             },
+            
             {
                 path: "/register",
                 element: (
                     <Suspense fallback={<LoadingScreen />}>
-                        <Register />,
+                        <Register />
                     </Suspense>
                 ),
             },
+
             {
                 path: "/login",
                 element: (
                     <Suspense fallback={<LoadingScreen />}>
-                        <Login />,
+                        <Login />
                     </Suspense>
                 ),
             },
@@ -144,6 +146,7 @@ const router = createBrowserRouter([
                     </ProtectRouting>
                 ),
             },
+            
         ],
     },
 ]);

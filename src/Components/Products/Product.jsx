@@ -20,7 +20,9 @@ import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDelete }) => {
 
-    const { cart, addToCart } = UseCart();
+    const { token } = useUser();
+
+    const { cart } = UseCart();
 
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -99,7 +101,7 @@ const Product = ({ id, img, title, price, description, max, prefix, onEdit, onDe
     return (
         <div className='d-flex justify-content-center align-items-center w-100 mb-2 position-relative overflow-hidden p-2 shadow bg-light pro'>
 
-            {!isAdmin && (
+            {!isAdmin && token && (
                 <div
                     className="position-absolute bg-light p-1 shadow rounded-3 heart"
                     onClick={handleWishlistToggle}
