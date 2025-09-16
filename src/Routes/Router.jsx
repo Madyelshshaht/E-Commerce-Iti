@@ -11,14 +11,7 @@ import Users from "../Pages/Users";
 import Wishlists from "../Pages/Wishlists";
 
 
-// import Home from '../Pages/Home';
-// import Products from '../Pages/Products';
-// import Cart from '../Pages/Cart';
-// import Register from '../Pages/Register';
-// import Login from '../Pages/Login';
-// import ProductDetails from '../Components/Products/ProductDetails';
-// import Profile from '../Pages/Profile';
-// import Orders from '../Pages/Orders';
+
 
 const Home = lazy(() => import("../Pages/Home"));
 const Products = lazy(() => import("../Pages/Products"));
