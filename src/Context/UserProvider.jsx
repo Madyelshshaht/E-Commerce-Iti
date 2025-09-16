@@ -181,7 +181,6 @@ const UserProvider = ({ children }) => {
         }
     };
 
-
     useEffect(() => {
         if (!token) return;
 

@@ -12,7 +12,9 @@ import "react-phone-input-2/lib/bootstrap.css";
 import "./style.css";
 
 const RegisterForm = () => {
-    const { RegisterFunc, loading, error } = useUser();
+    const { RegisterFunc, loading, error, user } = useUser();
+
+    console.log("Current User in RegisterForm:", user);
 
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -25,7 +27,7 @@ const RegisterForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         const errors = [];
 
 
@@ -85,6 +87,14 @@ const RegisterForm = () => {
             );
             return;
         }
+
+        if (user && user.registerErrors?.length) {
+            user.registerErrors.forEach(msg =>
+                toast.error(msg || "The Email is already used.")
+            );
+            return;
+        }
+
 
         const result = await RegisterFunc({
             email: safeEmail,
