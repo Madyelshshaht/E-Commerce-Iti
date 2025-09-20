@@ -36,7 +36,7 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="pt-1 d-flex align-items-center justify-content-between px-3 container-fluid sticky-top bg-white ">
+            <nav className="pt-1 d-flex align-items-center justify-content-between px-3 container-fluid sticky-top bg-white" style={{zIndex:"1020"}}>
                 <div className="">
                     <h2>
                         Click to
@@ -59,7 +59,7 @@ const Navbar = () => {
                     {isAdmin ? (
                         <Link
                             className="navbar-brand badge text-bg-secondary p-2 fs-3 text-white"
-                            to="/"
+                            to="/admin"
                         >
                             Admin
                         </Link>
@@ -93,7 +93,7 @@ const Navbar = () => {
                             {isAdmin ? (
                                 <Link
                                     className="offcanvas-title text-decoration-none badge text-bg-secondary p-2 fs-3 text-white"
-                                    to="/"
+                                    to="/admin"
                                 >
                                     Admin
                                 </Link>
@@ -152,15 +152,7 @@ const Navbar = () => {
                                     >
                                         Orders
                                     </Link>
-                                    {isAdmin && (
-                                        <Link
-                                            to="/users"
-                                            className="text-decoration-none text-black"
-                                            aria-current="page"
-                                        >
-                                            Users
-                                        </Link>
-                                    )}
+
 
                                     <Link className="nav-link" aria-current="page" to="/profile">
                                         <span>

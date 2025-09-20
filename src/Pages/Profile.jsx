@@ -3,6 +3,8 @@ import { useUser } from '../Context/UserProvider';
 import LoadingSpinner from '../Components/Common/LoadingSpinner';
 import Heading from '../Components/Common/Heading';
 
+import img1 from "../assets/Cat_Image/download.jpg"
+
 const Profile = () => {
     const { user } = useUser();
 
@@ -14,7 +16,7 @@ const Profile = () => {
     }
 
     return (
-        <>
+        <div className='container mt-4'>
             <Heading title={`Your Profile`} />
 
             <div className="d-flex justify-content-center align-items-center bg-light mt-5 p-md-5 ">
@@ -63,7 +65,7 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 

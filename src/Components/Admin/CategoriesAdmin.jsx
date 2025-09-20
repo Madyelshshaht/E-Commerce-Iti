@@ -1,23 +1,20 @@
-
-import { useEffect, useRef, useState } from "react";
-import { Col, Row } from "react-bootstrap";
-
-import FormCategory from "../Components/Categories/FormCategory";
-import Category from "../Components/Categories/Category";
-
-import CategoriesSkeleton from "../Components/Feedback/Skeleton/CategoriesSkeleton";
-import useCategories from "../Hooks/useCategories/useCategories";
-import SearchCategory from "../Components/Categories/SearchCategory";
+import React, { useState } from 'react'
+import useCategories from '../../Hooks/useCategories/useCategories';
+import { useUser } from '../../Context/UserProvider';
+import CategoriesSkeleton from '../Feedback/Skeleton/CategoriesSkeleton';
+import Heading from '../Common/Heading';
 
 
 import Lottie from "lottie-react";
-import NoData from "../assets/LotiFiles/No_Data.json";
-import { useUser } from "../Context/UserProvider";
-import ErrorsMessage from "../Components/Common/ErrorsMessage";
-import Heading from "../Components/Common/Heading";
+import NoData from "../../assets/LotiFiles/No_Data.json";
+import CategoryAdmin from './CategoryAdmin';
+import SearchCategory from '../Categories/SearchCategory';
+import FormCategory from '../Categories/FormCategory';
+import { Col, Row } from 'react-bootstrap';
+import CategorySkeletonA from '../Feedback/SkeletonAdmin/CategorySkeltonA';
 
+const CategoriesAdmin = () => {
 
-const Categories = () => {
     const {
         categories,
         loading,
@@ -59,7 +56,7 @@ const Categories = () => {
 
 
     if (loading) {
-        return <CategoriesSkeleton />;
+        return <CategorySkeletonA />;
     }
 
     if (error) return <>
@@ -79,21 +76,21 @@ const Categories = () => {
 
 
 
-
     return (
-        <div className="container mt-4">
-            <div className="d-flex justify-content-between align-items-center mb-5 mt-3 overflow-hidden ">
+        <>
+            <div className="d-flex justify-content-between align-items-center mb-5 px-2 overflow-hidden ">
                 <Heading title="Categories" />
+                {/* <h1>Categories</h1> */}
 
-                {/* {isAdmin && (
-                        <button className="btn btn-success" onClick={handleAdd}>
-                            {!toggle ? " Add Category " : "Close"}
-                        </button>
-                )} */}
+                {isAdmin && (
+                    <button className="btn btn-success " onClick={handleAdd}>
+                        {!toggle ? "Add Category" : "Close"}
+                    </button>
+                )}
 
             </div>
 
-            {/* {isAdmin && (
+            {isAdmin && (
                 <FormCategory
                     toggle={toggle}
                     setToggle={setToggle}
@@ -102,7 +99,7 @@ const Categories = () => {
                     AddCategory={AddCategory}
                     EditCategory={EditCategory}
                 />
-            )} */}
+            )}
 
             <Row>
                 {/* Search */}
@@ -113,13 +110,13 @@ const Categories = () => {
                 {displayedProducts.length > 0 ? (
                     displayedProducts.map((cat) => (
                         <Col
-                            lg={3}
-                            md={4}
-                            xs={6}
+                            lg={6}
+                            sm={6}
+                            xs={12}
                             className="d-flex justify-content-center mb-5 mt-3 "
                             key={cat.categoryId}
                         >
-                            <Category
+                            <CategoryAdmin
                                 id={cat.categoryId}
                                 title={cat.title}
                                 img={cat.imageData}
@@ -139,8 +136,8 @@ const Categories = () => {
                 )}
 
             </Row>
-        </div>
-    );
-};
+        </>
+    )
+}
 
-export default Categories;
+export default CategoriesAdmin

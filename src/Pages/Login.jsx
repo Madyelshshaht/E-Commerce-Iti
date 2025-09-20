@@ -13,7 +13,6 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = [];
@@ -39,12 +38,17 @@ const Login = () => {
 
     try {
       const res = await Login(safeEmail, safePassword);
-      toast.success("Logged in successfully!:", res);
+
+      const role = res?.userRoles || [];
+      const isAdmin = role.includes("Admin");
+
+      toast.success(isAdmin ? "Redirecting to Admin Dashboard..." : "Logged in successfully!");
+
       setTimeout(() => {
-        navigate("/")
+        navigate(isAdmin ? "/admin" : "/");
       }, 1000);
     } catch (err) {
-      toast.error("Login failed. Please check your credentials.", err);
+      toast.error("Login failed. Please check your credentials.");
     }
   };
 

@@ -69,11 +69,10 @@ const Orders = () => {
     );
 
     return (
-        <>
+        <div className="container mt-4">
             <Heading title={`Orders Page`} />
 
-            <div>
-                <h2 className="mt-5">My Orders</h2>
+            <div className="">
                 {orders.length === 0 ? (
                     <>
                         <div className="m-auto w-100" style={{ maxWidth: "600px" }} >
@@ -132,7 +131,7 @@ const Orders = () => {
                     </div>
                 )}
             </div>
-        </>
+        </div>
     )
 };
 

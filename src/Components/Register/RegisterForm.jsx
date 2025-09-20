@@ -46,7 +46,7 @@ const RegisterForm = () => {
             errors.push("Please enter a valid phone number.");
         }
 
-        const nameRegex = /^[a-zA-Z\s'-]+$/;
+        const nameRegex = /^[a-zA-Z0-9\s'-]+$/;
 
         if (!nameRegex.test(safeFirstName)) {
             errors.push("First name can only contain letters.");
@@ -88,12 +88,12 @@ const RegisterForm = () => {
             return;
         }
 
-        if (user && user.registerErrors?.length) {
-            user.registerErrors.forEach(msg =>
-                toast.error(msg || "The Email is already used.")
-            );
-            return;
-        }
+        // if (user && user.registerErrors?.length) {
+        //     user.registerErrors.forEach(msg =>
+        //         toast.error(msg || "The Email is already used.")
+        //     );
+        //     return;
+        // }
 
 
         const result = await RegisterFunc({

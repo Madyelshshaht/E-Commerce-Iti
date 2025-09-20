@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { UseCart } from './CartProvider';
 import api from '../services/axios-global';
@@ -14,12 +14,14 @@ const UserProvider = ({ children }) => {
 
 
     const [user, setUser] = useState(null)
-    // console.log("user", user);
+    console.log("user", user?.expiresIn);
     const [userRole, setUserRole] = useState("")
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const [token, setToken] = useState(localStorage.getItem("token"));
+    console.log("tokenState:", token)
 
     const RegisterFunc = async ({ email, password, firstName, lastName, phoneNumber }) => {
         setLoading(true);
@@ -44,6 +46,8 @@ const UserProvider = ({ children }) => {
 
             setUser(res.data);
             setToken(res.data.token);
+
+            if (res.data.expiresIn) startRefreshTimer(res.data.expiresIn);
 
             return res.data;
 
@@ -81,9 +85,18 @@ const UserProvider = ({ children }) => {
         const storedToken = localStorage.getItem("token");
 
         if (storedUser && storedToken) {
-            setUser(JSON.parse(storedUser));
+            const parsedUser = JSON.parse(storedUser);
+            setUser(parsedUser);
             setToken(storedToken);
+
+            if (parsedUser.expiresIn) startRefreshTimer(parsedUser.expiresIn);
         }
+
+        // if (storedUser && storedToken) {
+        //     setUser(JSON.parse(storedUser));
+        //     setToken(storedToken);
+
+        // }
     }, []);
 
 
@@ -99,12 +112,15 @@ const UserProvider = ({ children }) => {
             );
 
             localStorage.setItem("token", res.data.token);
+
+            console.log("Token", res.data.token)
             localStorage.setItem("refreshToken", res.data.refreshToken);
             localStorage.setItem("user", JSON.stringify(res.data));
-            // localStorage.setItem("role" , JSON.stringify(res.data.userRoles) )
 
             setUser(res.data)
             setToken(res.data.token);
+
+            if (res.data.expiresIn) startRefreshTimer(res.data.expiresIn);
 
 
             return res.data;
@@ -128,53 +144,68 @@ const UserProvider = ({ children }) => {
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("user");
+        if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
         setToken(null);
         setUser(null);
     };
 
+    const refreshTimerRef = useRef(null);
 
+    const startRefreshTimer = (expiresInSeconds) => {
+        if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+
+        // جدّد قبل انتهاء التوكن بـ 60 ثانية
+        const refreshBefore = (expiresInSeconds - 60) * 1000;
+
+        refreshTimerRef.current = setTimeout(() => {
+            RefreshToken();
+        }, refreshBefore);
+    };
+
+    
     const RefreshToken = async () => {
         try {
-            const token = localStorage.getItem('token')
             const refreshToken = localStorage.getItem("refreshToken");
+            console.log(refreshToken)
+
+            let currentToken = localStorage.getItem("token");
+
+            console.log("Current token from storage:", currentToken);
+
             if (!refreshToken) return null;
 
-            const res = await axios.post(
-                "http://clicktobuy.runasp.net/api/Auth/RefreshToken",
-                { token, refreshToken },
+            const res = await api.post(
+                "/Auth/RefreshToken",
+                { token: currentToken, refreshToken },
                 {
                     headers: {
                         "Content-Type": "application/json",
-                    }
+                    },
                 }
             );
 
+            console.log("Refresh Token:", res.data);
+
+            // Store new tokens
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("refreshToken", res.data.refreshToken);
 
-            axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
-
+            // Update state
             setToken(res.data.token);
-            setUser(prev => ({ ...prev, token: res.data.token }));
+            // setUser((prev) => ({ ...prev, token: res.data.token }));
+            setUser((prev) => prev ? { ...prev, token: res.data.token } : prev);
+
+            if (res.data.expiresIn) startRefreshTimer(res.data.expiresIn);
 
             return res.data.token;
+
         } catch (err) {
             console.error("Failed to refresh token", err);
 
             if (err.response?.status === 400 || err.response?.status === 401) {
-                toast.error("the Session has expired LogIn Again", {
-                    position: "top-right",
-                    autoClose: 4000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });
-
-                setTimeout(() => {
-                    Logout();
-                }, 4200);
+                console.warn("⚠️ Refresh token is invalid or expired. Logging out...");
+                Logout();
+                toast.error("The session has expired. Please log in again.");
             }
 
             return null;
@@ -182,45 +213,19 @@ const UserProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        if (!token) return;
 
-        const expiresIn = 1800;
-        const refreshBefore = (expiresIn - 60) * 1000;
-
-        const timer = setTimeout(() => {
-            RefreshToken();
-        }, refreshBefore);
-
-        return () => clearTimeout(timer);
-    }, [token]);
-
-    useEffect(() => {
-        const reqInterceptor = axios.interceptors.request.use(
-            (config) => {
-                const currentToken = localStorage.getItem("token");
-                if (currentToken) {
-                    config.headers.Authorization = `Bearer ${currentToken}`;
-                }
-                return config;
-            },
-            (error) => Promise.reject(error)
-        );
-
-        const resInterceptor = axios.interceptors.response.use(
+        const resInterceptor = api.interceptors.response.use(
             (response) => response,
             async (error) => {
                 const originalRequest = error.config;
 
-                if (
-                    error.response?.status === 401 &&
-                    !originalRequest._retry
-                ) {
+                if (error.response?.status === 401 && !originalRequest._retry) {
                     originalRequest._retry = true;
                     const newToken = await RefreshToken();
 
                     if (newToken) {
                         originalRequest.headers.Authorization = `Bearer ${newToken}`;
-                        return axios(originalRequest);
+                        return api(originalRequest);
                     }
                 }
 
@@ -229,8 +234,7 @@ const UserProvider = ({ children }) => {
         );
 
         return () => {
-            axios.interceptors.request.eject(reqInterceptor);
-            axios.interceptors.response.eject(resInterceptor);
+            api.interceptors.response.eject(resInterceptor);
         };
     }, []);
 
