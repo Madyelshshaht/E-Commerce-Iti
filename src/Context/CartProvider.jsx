@@ -18,7 +18,6 @@ const CartProvider = ({ children }) => {
         items: []
     });
 
-    console.log("cart from context", cart.items);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);

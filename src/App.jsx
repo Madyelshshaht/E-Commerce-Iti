@@ -9,7 +9,7 @@ function App() {
     <div className='min-vh-100 d-flex flex-column'>
       <Navbar />
 
-      <main className="flex-fill container mt-4">
+      <main className="flex-fill ">
         <Outlet />
       </main>
 

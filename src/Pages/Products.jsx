@@ -75,12 +75,9 @@ const Products = () => {
         </>
     }
 
-
-
-
     return (
-        <>
-            <div className="d-flex justify-content-between align-items-center mb-2 overflow-hidden">
+        <div className="container mt-4 ">
+            <div className="d-flex justify-content-between align-items-center mb-4 overflow-hidden">
                 <Heading title={`Products ${prefix}`} />
 
                 {/* to can Add Product */}
@@ -146,7 +143,7 @@ const Products = () => {
                     )}
                 </Row>
             </div>
-        </>
+        </div>
     );
 };
 

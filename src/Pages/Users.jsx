@@ -1,16 +1,17 @@
-
-import React, { useEffect, useState } from 'react'
-import api from '../services/axios-global';
-import LoadingSpinner from '../Components/Common/LoadingSpinner';
-
+import React, { useEffect, useState } from "react";
+import api from "../services/axios-global";
+import LoadingSpinner from "../Components/Common/LoadingSpinner";
+import ErrorsMessage from "../Components/Common/ErrorsMessage";
+import { MdDeleteOutline } from "react-icons/md";
+import Swal from "sweetalert2";
+import { BiShoppingBag } from "react-icons/bi";
+import { Button, Modal } from "react-bootstrap";
 const Users = () => {
-
     const [users, setUsers] = useState([]);
-
     const [loading, setLoading] = useState(false);
-
     const [error, setError] = useState("");
 
+    const token = localStorage.getItem("token");
 
     const GetUsers = async () => {
         setLoading(true);
@@ -19,25 +20,128 @@ const Users = () => {
             setUsers(res.data);
         } catch (err) {
             setError(err.message);
-        }
-        finally {
+        } finally {
             setLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
         GetUsers();
-    }, [])
+    }, []);
 
-    if (loading) { return <LoadingSpinner message="Loading Users..." size={"lg"} />; }
+    const DeleteUser = async (userId) => {
+        try {
+            const result = await Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!",
+            });
+
+            if (!result.isConfirmed) return;
+
+            const res = await api.delete(`/Users/DeleteUserByID`, {
+                params: { id: userId },
+            });
+
+            if (res.status === 200) {
+                await GetUsers();
+
+                Swal.fire({
+                    title: "Deleted!",
+                    text: "✅ User deleted successfully.",
+                    icon: "success",
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
+            }
+
+            setUsers((prevUsers) => prevUsers.filter((u) => u.id !== userId));
+        } catch (err) {
+            setError("Error In Delete User", err);
+
+            Swal.fire({
+                title: "Error!",
+                text: "Failed to delete user. Please try again.",
+                icon: "error",
+                confirmButtonText: "OK",
+            });
+        }
+    };
+
+    const [orders, setOrders] = useState([]); // 🆕 state للطلبات
+    console.log(orders);
+    const [selectedUser, setSelectedUser] = useState(null); // 🆕 المستخدم الحالي
+    const [showOrdersModal, setShowOrdersModal] = useState(false); // 🆕 فتح/غلق المودال
+
+    const GetUserOrders = async (userId) => {
+        if (!userId) return;
+        setLoading(true);
+        setError(null);
+        setOrders([]);
+        setSelectedUser(userId);
+        setShowOrdersModal(true);
+        try {
+            const res = await api.get(`/Orders/GetUserOrders/${userId}`);
+
+            if (!res.data || res.data.length === 0) {
+                setOrders([]);
+                return;
+            }
+
+            setOrders(res.data);
+        } catch (err) {
+            setOrders([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const [selectedOrder, setSelectedOrder] = useState(null); // 🆕 الطلب المختار
+    const [orderDetails, setOrderDetails] = useState([]); // 🆕 تفاصيل الطلب
+    console.log(orderDetails);
+
+    const OrderDetails = async (orderId) => {
+        setLoading(true);
+        setOrderDetails([]);
+        try {
+            const res = await api.get(`/Orders/GetProductsDetails/${selectedUser}`, {
+                headers: { Authorization: `Bearer ${token}` },
+                params: { orderId },
+            });
+
+            
+
+            setOrderDetails(res.data);
+            setSelectedOrder(orderId);
+            return res.data;
+        } catch (error) {
+            setError("Error in Show Details:", error.response?.data || error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading && !showOrdersModal) {
+        return <LoadingSpinner message="Loading Users..." size={"lg"} />;
+    }
 
     if (error) {
-        return <ErrorsMessage message={error} />
+        return <ErrorsMessage message={error} />;
+    }
+
+    const onClsoe = () => {
+        setSelectedOrder(null);
+        setOrderDetails([]);
+        setShowOrdersModal(false)
     }
 
     return (
         <>
-            <h1 className='fw-bold'>Users</h1>
+            <h1 className="fw-bold">Users</h1>
             <div>
                 {users.length === 0 ? (
                     <p>No users found.</p>
@@ -52,6 +156,8 @@ const Users = () => {
                                     <th>LastName</th>
                                     <th>Email</th>
                                     <th>Phone Number</th>
+                                    <th>Orders</th>
+                                    <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -63,16 +169,196 @@ const Users = () => {
                                         <td>{user.lastName}</td>
                                         <td>{user.email}</td>
                                         <td>{user.phoneNumber || "---- ---- ----"}</td>
+                                        <td>
+                                            {
+                                                <button
+                                                    className=" btn btn-info fw-bold text-white"
+                                                    title="Order"
+                                                    onClick={() => GetUserOrders(user.id)}
+                                                >
+                                                    <BiShoppingBag size={22} />
+                                                </button>
+                                            }
+                                        </td>
+                                        <td>
+                                            <button
+                                                className=" btn btn-danger fw-bold"
+                                                title="Delete"
+                                                onClick={() => DeleteUser(user.id)}
+                                            >
+                                                <MdDeleteOutline size={22} className="" />
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
-
                 )}
             </div>
-        </>
-    )
-}
 
-export default Users
+            {/* <Modal
+                show={showOrdersModal}
+                onHide={() => setShowOrdersModal(false)}
+                size="lg"
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>User Orders - {selectedUser}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {loading ? (
+                        <LoadingSpinner message="Loading Orders..." size={"sm"} />
+                    ) : orders.length === 0 ? (
+                        <p className="text-center text-muted">No orders found for this user.</p>
+                    ) : (
+                        <div className="table-responsive">
+                            <table className="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Order ID</th>
+                                        <th>Status</th>
+                                        <th>items</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {orders.map((order, idx) => (
+                                        <tr key={order.orderId}>
+                                            <td>{idx + 1}</td>
+                                            <td>{order.orderId}</td>
+                                            <td>{order.status || "Pending"}</td>
+                                            <td>{order.countOfItems}</td>
+                                            <td>{order.totalAmoutForeachOrder
+                                            }</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowOrdersModal(false)}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal> */}
+
+            <Modal
+                show={showOrdersModal}
+                onHide={() => setShowOrdersModal(false)}
+                size="lg"
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        {selectedOrder
+                            ? `Order Details - ${selectedOrder}`
+                            : `User Orders - ${selectedUser}`}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {loading ? (
+                        <LoadingSpinner
+                            message={
+                                selectedOrder ? "Loading Order Details..." : "Loading Orders..."
+                            }
+                            size={"sm"}
+                        />
+                    ) : selectedOrder ? (
+                        <div className="table-responsive">
+                            <table className="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Product</th>
+                                        <th>image</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {orderDetails.map((item, idx) => (
+                                        <tr key={item.productId}>
+                                            <td>{idx + 1}</td>
+                                            <td>{item.productTitle}</td>
+                                            <td>
+                                                <img
+                                                    src={`data:image/png;base64,${item.productImage}`}
+                                                    alt={item.productTitle}
+                                                    width={80}
+                                                    height={80}
+                                                />
+                                            </td>
+                                            <td>{item.productQuantityInOrderItems}</td>
+                                            <td>{item.totalAmountForeachProduct}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : orders.length === 0 ? (
+                        <p className="text-center text-muted">
+                            No orders found for this user.
+                        </p>
+                    ) : (
+                        <div className="table-responsive">
+                            <table className="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Order ID</th>
+                                        <th>Status</th>
+                                        <th>Items</th>
+                                        <th>Total</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {orders.map((order, idx) => (
+                                        <tr key={order.orderId}>
+                                            <td>{idx + 1}</td>
+                                            <td>{order.orderId}</td>
+                                            <td>{order.status || "Pending"}</td>
+                                            <td>{order.countOfItems}</td>
+                                            <td>{order.totalAmoutForeachOrder}</td>
+                                            <td>
+                                                <Button
+                                                    variant="outline-primary"
+                                                    size="sm"
+                                                    onClick={() => OrderDetails(order.orderId)}
+                                                >
+                                                    View
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    {selectedOrder && (
+                        <Button
+                            variant="secondary"
+                            onClick={() => {
+                                setSelectedOrder(null);
+                                setOrderDetails([]);
+                            }}
+                        >
+                            Back to Orders
+                        </Button>
+                    )}
+                    <Button variant="secondary" onClick={onClsoe}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
+    );
+};
+
+export default Users;

@@ -9,6 +9,9 @@ import Loading from "../assets/LotiFiles/Loading.json";
 import Lottie from "lottie-react";
 import Users from "../Pages/Users";
 import Wishlists from "../Pages/Wishlists";
+import Admin from "../Pages/Admin";
+import Dashboard from "../Components/Admin/Dashboard";
+import CategoriesAdmin from "../Components/Admin/CategoriesAdmin";
 
 
 
@@ -83,7 +86,7 @@ const router = createBrowserRouter([
                     </Suspense>
                 ),
             },
-            
+
             {
                 path: "/register",
                 element: (
@@ -112,15 +115,6 @@ const router = createBrowserRouter([
             },
 
             {
-                path: "/users",
-                element: (
-                    <ProtectRouting>
-                        <Users />
-                    </ProtectRouting>
-                ),
-            },
-
-            {
                 path: "/wishlist",
                 element: (
                     <Suspense fallback={<LoadingScreen />}>
@@ -139,7 +133,36 @@ const router = createBrowserRouter([
                     </ProtectRouting>
                 ),
             },
-            
+
+            {
+                path: "/admin",
+                element: (
+                    <ProtectRouting>
+                        <Suspense fallback={<LoadingScreen />}>
+                            <Admin />
+                        </Suspense>
+                    </ProtectRouting>
+                ),
+                children: [
+                    {
+                        index: true,
+                        element: <Dashboard />,
+                    },
+                    {
+                        path: "categories",
+                        element: (
+                            <CategoriesAdmin />
+                        ),
+                    },
+                    {
+                        path: "users",
+                        element: (
+                            <Users />
+                        ),
+                    },
+                ],
+            },
+
         ],
     },
 ]);

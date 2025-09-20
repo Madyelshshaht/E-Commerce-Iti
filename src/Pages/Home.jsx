@@ -15,10 +15,10 @@ import { RiCustomerService2Fill } from "react-icons/ri";
 
 const Home = () => {
     return (
-        <div className='home-page container-fluid p-0 '>
+        <div className='home-page container '>
 
             {/* Hero Section */}
-            <section className="hero text-white row px-3 ">
+            <section className="hero text-white row  ">
 
                 <div className="col-md-6">
                     <div className="m-auto">

@@ -26,7 +26,7 @@ const Category = ({ title, img, prefix, onEdit, onDelete, id }) => {
     return (
         <div className="category  position-relative  px-1 overflow-hidden  ">
 
-            {isAdmin && (
+            {/* {isAdmin && (
                 <div
                     className='position-absolute '
                     style={{ right: "0", top: "5px", zIndex: "10px", cursor: "pointer" }}
@@ -66,7 +66,7 @@ const Category = ({ title, img, prefix, onEdit, onDelete, id }) => {
                             Delete
                         </button>
                     </div>
-                )}
+                )} */}
 
             <Link to={`/categories/products/${prefix}`} className="link  p-3 ">
 
